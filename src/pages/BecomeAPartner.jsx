@@ -1,8 +1,105 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import PageTitle from '../components/PageTitle';
+import Popup from '../ui-share/Popup';
+import {guestContactUs} from '../api';
+import Spinner from '../ui-share/Spinner';
 
 export default function BecomeAPartner() {
+	const [loading, setLoading] = useState(false);
+	const [errors, setErrors] = useState({});
+	const [isPopupOpen, setIsPopupOpen] = useState(false);
+	const [popupMessage, setPopupMessage] = useState('');
+
+	const [formData, setFormData] = useState({
+		firstName: '',
+		lastName: '',
+		email: '',
+		phone: '',
+		city: '',
+		postcode: '',
+		restaurantName: '',
+		message: 'None',
+		agreeTerms: false,
+		agreeMarketing: false,
+	});
+
+	// Handle input change
+	const handleChange = (e) => {
+		const {name, value, type, checked} = e.target;
+		setFormData({
+			...formData,
+			[name]: type === 'checkbox' ? checked : value,
+		});
+	};
+
+	// Validation
+	const validateForm = () => {
+		const newErrors = {};
+		const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		const phonePattern = /^\d{11}$/;
+
+		if (!formData.firstName.trim()) newErrors.firstName = 'First name is required.';
+		if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required.';
+		if (!formData.email.trim() || !emailPattern.test(formData.email)) newErrors.email = 'A valid email is required.';
+		if (!formData.phone.trim() || !phonePattern.test(formData.phone))
+			newErrors.phone = 'Phone number must be exactly 11 digits.';
+		if (!formData.restaurantName.trim()) newErrors.restaurantName = 'Restaurant name is required.';
+		if (!formData.city.trim()) newErrors.city = 'City is required.';
+		if (!formData.postcode.trim()) newErrors.postcode = 'Postcode is required.';
+		if (!formData.agreeTerms) newErrors.agreeTerms = 'You must agree to the terms and conditions.';
+
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
+
+	// Handle form submit
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		if (!validateForm()) return;
+
+		setLoading(true);
+		setErrors({});
+
+		try {
+			const data = {
+				first_name: formData.firstName,
+				last_name: formData.lastName,
+				email: formData.email,
+				phone: formData.phone,
+				city: formData.city,
+				post_code: formData.postcode,
+				restaurant_name: formData.restaurantName,
+				message: formData.message,
+			};
+
+			console.log('API Data:', data);
+
+			const response = await guestContactUs(data);
+
+			setPopupMessage(response.message || 'Your message has been sent successfully!');
+			setIsPopupOpen(true);
+
+			setFormData({
+				firstName: '',
+				lastName: '',
+				email: '',
+				phone: '',
+				city: '',
+				postcode: '',
+				restaurantName: '',
+				message: 'None',
+				agreeTerms: false,
+				agreeMarketing: false,
+			});
+		} catch (error) {
+			const apiError = error.response?.data?.message || 'An unexpected error occurred. Please try again later.';
+			setErrors({apiError});
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<>
 			<PageTitle title="Sign Up" description="Home Page Description" />
@@ -34,43 +131,53 @@ export default function BecomeAPartner() {
 				</div>
 
 				<div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
-					<h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-					<form className="w-full flex flex-col gap-y-4">
-						<div className="grid grid-cols-12 gap-4 flex-wrap w-full">
+					<h2 className="text-2xl font-bold mb-6 text-center">Register Your Business</h2>
+					{errors.apiError && <p className="text-red-500 text-center mb-4">{errors.apiError}</p>}
+					<form className="w-full flex flex-col gap-y-4" onSubmit={handleSubmit}>
+						<div className="grid grid-cols-12 gap-4">
 							<div className="md:col-span-6 col-span-12">
 								<label className="block text-gray-700">
 									First name<span className="text-red-500">*</span>
 								</label>
 								<input
 									type="text"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+									name="firstName"
+									value={formData.firstName}
+									onChange={handleChange}
+									className="w-full p-2 border border-gray-300 rounded-lg"
 									placeholder="Enter your first name"
-									required
 								/>
+								{errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
 							</div>
 							<div className="md:col-span-6 col-span-12">
 								<label className="block text-gray-700">
-									First name<span className="text-red-500">*</span>
+									Last name<span className="text-red-500">*</span>
 								</label>
 								<input
 									type="text"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-									placeholder="Enter your first name"
-									required
+									name="lastName"
+									value={formData.lastName}
+									onChange={handleChange}
+									className="w-full p-2 border border-gray-300 rounded-lg"
+									placeholder="Enter your last name"
 								/>
+								{errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
 							</div>
 						</div>
-						<div className="grid grid-cols-12 gap-4 flex-wrap w-full">
+						<div className="grid grid-cols-12 gap-4">
 							<div className="md:col-span-6 col-span-12">
 								<label className="block text-gray-700">
 									Email address<span className="text-red-500">*</span>
 								</label>
 								<input
-									type="text"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-									placeholder="Enter your first name"
-									required
+									type="email"
+									name="email"
+									value={formData.email}
+									onChange={handleChange}
+									className="w-full p-2 border border-gray-300 rounded-lg"
+									placeholder="Enter your email"
 								/>
+								{errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 							</div>
 							<div className="md:col-span-6 col-span-12">
 								<label className="block text-gray-700">
@@ -78,81 +185,109 @@ export default function BecomeAPartner() {
 								</label>
 								<input
 									type="text"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-									placeholder="Enter your first name"
-									required
+									name="phone"
+									value={formData.phone}
+									onChange={handleChange}
+									className="w-full p-2 border border-gray-300 rounded-lg"
+									placeholder="Enter your phone number"
 								/>
+								{errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
 							</div>
 						</div>
-						<div className="grid grid-cols-12 gap-4 flex-wrap w-full">
+						<div className="grid grid-cols-12 gap-4">
 							<div className="md:col-span-6 col-span-12">
 								<label className="block text-gray-700">
 									City<span className="text-red-500">*</span>
 								</label>
 								<input
 									type="text"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-									placeholder="Enter your first name"
-									required
+									name="city"
+									value={formData.city}
+									onChange={handleChange}
+									className="w-full p-2 border border-gray-300 rounded-lg"
+									placeholder="Enter your city"
 								/>
+								{errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
 							</div>
 							<div className="md:col-span-6 col-span-12">
 								<label className="block text-gray-700">
-									Postal Code<span className="text-red-500">*</span>
+									Post Code<span className="text-red-500">*</span>
 								</label>
 								<input
 									type="text"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-									placeholder="Enter your first name"
-									required
+									name="postcode"
+									value={formData.postcode}
+									onChange={handleChange}
+									className="w-full p-2 border border-gray-300 rounded-lg"
+									placeholder="Enter your postal code"
 								/>
-							</div>
-						</div>
-						<div className="grid grid-cols-12 gap-2 flex-wrap w-full">
-							<div className="col-span-12">
-								<label className="block text-gray-700">
-									Restaurant Name<span className="text-red-500">*</span>
-								</label>
-								<input
-									type="password"
-									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-									placeholder="Enter your first name"
-									required
-								/>
-							</div>
-						</div>
-						<div className="grid grid-cols-12 gap-2 flex-wrap w-full">
-							<div className="col-span-12">
-								<input type="checkbox" className="mr-2 leading-tight" />
-								<label className="text-gray-700">
-									By submitting this form, I agree to TableBooking
-									<Link to="/terms-and-conditions" className="text-blue-500 hover:underline mx-1">
-										Terms and Conditions
-									</Link>
-									and
-									<Link to="/privacy-policy" className="text-blue-500 hover:underline ml-1">
-										Privacy Policy
-									</Link>
-									.*
-								</label>
-							</div>
-						</div>
-						<div className="grid grid-cols-12 gap-2 flex-wrap w-full">
-							<div className="col-span-12">
-								<input type="checkbox" className="mr-2 leading-tight" />
-								<label className="text-gray-700">
-									I agree to receive email newsletters and marketing communication from Quandoo. I understand that I can
-									unsubscribe at any time.
-								</label>
+								{errors.postcode && <p className="text-red-500 text-sm">{errors.postcode}</p>}
 							</div>
 						</div>
 
-						<button type="submit" className="w-full bg-button text-white p-2 rounded-lg hover:bg-buttonHover">
+						<div>
+							<label className="block text-gray-700">
+								Restaurant Name<span className="text-red-500">*</span>
+							</label>
+							<input
+								type="text"
+								name="restaurantName"
+								value={formData.restaurantName}
+								onChange={handleChange}
+								className="w-full p-2 border border-gray-300 rounded-lg"
+								placeholder="Enter your restaurant name"
+							/>
+							{errors.restaurantName && <p className="text-red-500 text-sm">{errors.restaurantName}</p>}
+						</div>
+						<div>
+							<input
+								type="checkbox"
+								name="agreeTerms"
+								checked={formData.agreeTerms}
+								onChange={handleChange}
+								className="mr-2"
+							/>
+							<label className="text-gray-700">
+								By submitting this form, I agree to TableBooking{' '}
+								<Link to="/terms-and-conditions" className="text-blue-500">
+									Terms and Conditions
+								</Link>{' '}
+								and{' '}
+								<Link to="/privacy-policy" className="text-blue-500">
+									Privacy Policy
+								</Link>
+								.*
+							</label>
+						</div>
+						<div>
+							<input
+								type="checkbox"
+								name="agreeMarketing"
+								checked={formData.agreeMarketing}
+								onChange={handleChange}
+								className="mr-2"
+							/>
+							<label className="text-gray-700">
+								I agree to receive email newsletters and marketing communication from TableBooking.
+							</label>
+						</div>
+						<button
+							type="submit"
+							className="w-full bg-button text-white p-2 rounded-lg hover:bg-buttonHover flex justify-center items-center gap-2"
+						>
 							Submit
+							{loading && <Spinner />}
 						</button>
 					</form>
 				</div>
 			</div>
+
+			<Popup
+				isOpen={isPopupOpen}
+				title="Submission Successful"
+				content={<p>{popupMessage}</p>}
+				onClose={() => setIsPopupOpen(false)}
+			/>
 		</>
 	);
 }

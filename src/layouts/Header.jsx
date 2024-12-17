@@ -113,10 +113,17 @@ export default function Header() {
 															<SignUp size={25} />
 															<li className="px-2 py-1 rounded text-black">Sign up</li>
 														</NavLink>
-														{/* <NavLink to="/dashboard" className="flex items-center gap-2 text-button">
+														<NavLink to="/become-a-partner" className="flex items-center gap-2 text-button">
+															<Partner size={25} />
+															<li className="px-2 py-1 rounded text-black">Become a partner</li>
+														</NavLink>
+														<NavLink
+															to="https://restaurant.tablebookings.co.uk/"
+															className="flex items-center gap-2 text-button"
+														>
 															<Restaurant size={25} />
 															<li className="px-2 py-1 rounded text-black">For restaurants</li>
-														</NavLink> */}
+														</NavLink>
 													</ul>
 												</div>
 											)}
@@ -133,20 +140,31 @@ export default function Header() {
 														Sign up
 													</NavLink>
 												</li>
+												<li className="font-bold text-[16px] text-button hover:text-buttonHover">
+													<NavLink
+														to="become-a-partner"
+														className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
+														onClick={closeMobileMenu}
+													>
+														<Partner size={25} />
+														<li className="rounded font-bold text-sm md:text-base">Become a partner</li>
+													</NavLink>
+												</li>
 											</div>
 										</div>
 									)}
-									<NavLink
+									{/* <NavLink
 										to="become-a-partner"
-										className="flex items-center text-button space-x-2"
+										className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
 										onClick={closeMobileMenu}
 									>
 										<Partner size={25} />
 										<li className="rounded font-bold text-sm md:text-base">Become a partner</li>
-									</NavLink>
+									</NavLink> */}
+
 									<NavLink
 										to="https://restaurant.tablebookings.co.uk/"
-										className="flex items-center text-button space-x-2"
+										className="items-center text-button space-x-2 hidden md:flex"
 										onClick={closeMobileMenu}
 										target="_blank"
 									>
