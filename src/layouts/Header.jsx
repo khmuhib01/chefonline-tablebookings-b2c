@@ -2,7 +2,7 @@ import React, {useState, useContext, useRef, useEffect} from 'react';
 import {Link, NavLink, useLocation, useNavigate} from 'react-router-dom';
 import SearchComponent from '../components/frontend/SearchComponent';
 import {logoImage} from '../ui-share/Image';
-import {Restaurant, Profile, SignIn, SignUp, VerticalMenu, Menu} from '../ui-share/Icon';
+import {Restaurant, Profile, SignIn, SignUp, VerticalMenu, Menu, Partner} from '../ui-share/Icon';
 import {AuthContextGuest} from '../context/AuthContextGuest';
 
 export default function Header() {
@@ -136,6 +136,14 @@ export default function Header() {
 											</div>
 										</div>
 									)}
+									<NavLink
+										to="become-a-partner"
+										className="flex items-center text-button space-x-2"
+										onClick={closeMobileMenu}
+									>
+										<Partner size={25} />
+										<li className="rounded font-bold text-sm md:text-base">Become a partner</li>
+									</NavLink>
 									<NavLink
 										to="https://restaurant.tablebookings.co.uk/"
 										className="flex items-center text-button space-x-2"

@@ -30,6 +30,7 @@ import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
 import ContactPage from './pages/ContactPage';
 import AboutUsPage from './pages/AboutUsPage';
 import ResetPassword from './pages/ResetPassword';
+import BecomeAPartner from './pages/BecomeAPartner';
 
 const AppRoutes = () => {
 	return (
@@ -54,6 +55,8 @@ const AppRoutes = () => {
 
 				<Route path="sign-in" element={<GuestLoginPage />} />
 				<Route path="sign-up" element={<GuestRegisterPage />} />
+
+				<Route path="become-a-partner" element={<BecomeAPartner />} />
 
 				<Route path="faq" element={<FaqPage />} />
 				<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
