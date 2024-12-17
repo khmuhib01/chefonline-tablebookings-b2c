@@ -26,6 +26,7 @@ export default function ContactPage() {
 	const recaptchaRef = useRef();
 
 	useEffect(() => {
+		window.scrollTo(0, 0);
 		// Disable right-click
 		document.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -103,13 +104,13 @@ export default function ContactPage() {
 			newErrors.restaurantName = 'Restaurant Name is required.';
 		}
 
-		if (!formData.message) {
-			newErrors.message = 'Message is required.';
-		} else if (formData.message.length < 10) {
-			newErrors.message = 'Message must be at least 10 characters.';
-		} else if (formData.message.length > maxMessageLength) {
-			newErrors.message = `Message must be no more than ${maxMessageLength} characters.`;
-		}
+		// if (!formData.message) {
+		// 	newErrors.message = 'Message is required.';
+		// } else if (formData.message.length < 10) {
+		// 	newErrors.message = 'Message must be at least 10 characters.';
+		// } else if (formData.message.length > maxMessageLength) {
+		// 	newErrors.message = `Message must be no more than ${maxMessageLength} characters.`;
+		// }
 
 		if (!recaptchaToken) {
 			newErrors.recaptcha = 'Please complete the CAPTCHA verification.';
@@ -331,12 +332,6 @@ export default function ContactPage() {
 							</div>
 						</div>
 					</div>
-					<Popup
-						isOpen={isPopupOpen}
-						title="Submission Successful"
-						content={<p>{popupMessage}</p>}
-						onClose={() => setIsPopupOpen(false)}
-					/>
 				</div>
 			</div>
 
@@ -371,6 +366,13 @@ export default function ContactPage() {
 					</div>
 				</div>
 			</div>
+
+			<Popup
+				isOpen={isPopupOpen}
+				title="Submission Successful"
+				content={<p>{popupMessage}</p>}
+				onClose={() => setIsPopupOpen(false)}
+			/>
 		</>
 	);
 }

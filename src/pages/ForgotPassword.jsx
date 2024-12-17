@@ -79,6 +79,8 @@ export default function ForgotPassword() {
 
 		if (!validateOtp()) return;
 
+		console.log('otp', otp);
+
 		try {
 			setLoading(true);
 			const response = await otpVerify(email, otp);
@@ -93,7 +95,7 @@ export default function ForgotPassword() {
 			}
 		} catch (error) {
 			console.error('Error:', error); // Log any potential errors
-			setPopupMessage('An error occurred. Please try again.');
+			setPopupMessage(response.data.message);
 		} finally {
 			setLoading(false);
 		}
@@ -168,9 +170,9 @@ export default function ForgotPassword() {
 				onClose={handleCloseOtpPopup}
 				title={'Enter OTP'}
 				content={
-					<form onSubmit={handleVerifyOtp}>
-						<div className="mb-4">
-							{popupMessage && <p className="text-green-500 text-xs">{popupMessage}</p>}
+					<form onSubmit={handleVerifyOtp} className="">
+						<div className="mb-4 text-left">
+							{popupMessage && <p className="text-green-500 text-xs mb-2">{popupMessage}</p>}
 
 							{!otpVerified && ( // Show input field only if OTP is not verified
 								<>

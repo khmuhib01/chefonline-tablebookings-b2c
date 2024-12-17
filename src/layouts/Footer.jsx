@@ -64,7 +64,7 @@ export default function Footer() {
 							<h3 className="text-primary text-[18px] font-bold uppercase">SOCIAL</h3>
 							<ul>
 								<li className="flex gap-x-5 font-bold">
-									<NavLink to="#">
+									<NavLink to="https://www.facebook.com/people/TableBookings/61565877556062/" target="_blank">
 										<div className="bg-white h-10 w-10 rounded-full flex justify-center items-center">
 											<FooterFacebook />
 										</div>
