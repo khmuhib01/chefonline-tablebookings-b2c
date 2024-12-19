@@ -115,9 +115,12 @@ export default function BecomeAPartner() {
 					<div className="h-[1px] bg-gray-200"></div>
 					<div className="grid grid-cols-2 gap-y-3">
 						<div className="md:col-span-1 col-span-2">
-							<h3 className="text-center text-xl font-bold">Already a TableBooking partner?</h3>
+							<h3 className="text-center text-xl font-bold">Already a tablebookings partner?</h3>
 
-							<Link to="/sign-in" className="text-blue-500 text-center block">
+							<Link
+								to="https://restaurant.tablebookings.co.uk/restaurant-sign-in"
+								className="text-blue-500 text-center block"
+							>
 								Log in
 							</Link>
 						</div>
@@ -248,7 +251,7 @@ export default function BecomeAPartner() {
 								className="mr-2"
 							/>
 							<label className="text-gray-700">
-								By submitting this form, I agree to TableBooking{' '}
+								By submitting this form, I agree to TableBookings{' '}
 								<Link to="/terms-and-conditions" className="text-blue-500">
 									Terms and Conditions
 								</Link>{' '}
@@ -268,7 +271,7 @@ export default function BecomeAPartner() {
 								className="mr-2"
 							/>
 							<label className="text-gray-700">
-								I agree to receive email newsletters and marketing communication from TableBooking.
+								I agree to receive email newsletters and marketing communication from TableBookings.
 							</label>
 						</div>
 						<button
