@@ -15,6 +15,7 @@ import {formatTime} from '../utils/conversions';
 import Popup from '../ui-share/Popup';
 import {AuthContextGuest} from '../context/AuthContextGuest';
 import PageTitle from '../components/PageTitle';
+import Spinner from '../ui-share/Spinner';
 
 export default function CheckoutPage() {
 	const [email, setEmail] = useState('');
@@ -31,6 +32,8 @@ export default function CheckoutPage() {
 	const [lastNameError, setLastNameError] = useState('');
 	const [emailError, setEmailError] = useState('');
 	const [phoneError, setPhoneError] = useState('');
+
+	const [loading, setLoading] = useState(false);
 
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
 	const [isTimerPaused, setIsTimerPaused] = useState(false); // New state for managing timer pause
@@ -61,6 +64,93 @@ export default function CheckoutPage() {
 	};
 
 	const handleReservationSubmit = async () => {
+		let isValid = true;
+
+		// Start loader
+		setLoading(true);
+
+		// Form validation
+		if (!isAuthenticated) {
+			if (!userFirstName) {
+				setFirstNameError('First name is required.');
+				isValid = false;
+			} else {
+				setFirstNameError('');
+			}
+
+			if (!userLastName) {
+				setLastNameError('Last name is required.');
+				isValid = false;
+			} else {
+				setLastNameError('');
+			}
+
+			if (!userPhone) {
+				setPhoneError('Phone number is required.');
+				isValid = false;
+			} else if (!/^\d{11}$/.test(userPhone)) {
+				setPhoneError('Phone number must be 11 digits.');
+				isValid = false;
+			} else {
+				setPhoneError('');
+			}
+
+			if (!email) {
+				setEmailError('Email is required.');
+				isValid = false;
+			} else if (!/\S+@\S+\.\S+/.test(email)) {
+				setEmailError('Email address is invalid.');
+				isValid = false;
+			} else {
+				setEmailError('');
+			}
+
+			if (!isValid) {
+				setLoading(false); // Stop loader if validation fails
+				return;
+			}
+		}
+
+		try {
+			if (isAuthenticated) {
+				await makeReservation(storeUser.guestUser.id);
+			} else {
+				const guestData = {
+					first_name: userFirstName || storeUser.first_name,
+					last_name: userLastName || storeUser.last_name,
+					phone: userPhone || storeUser.phone,
+					email: email || storeUser.email,
+					params: 'create',
+				};
+
+				const responsePostGuestRegister = await postGuestRegister(guestData);
+				const guestId = responsePostGuestRegister.data.id;
+				const guestName = `${responsePostGuestRegister.data.first_name} ${responsePostGuestRegister.data.last_name}`;
+				const guestEmail = responsePostGuestRegister.data.email;
+
+				// Clear form fields
+				setEmail('');
+				setUserFirstName('');
+				setUserLastName('');
+				setUserPhone('');
+				setUserSpecialRequest('');
+				setUserPromoCode('');
+
+				// Update Redux state
+				dispatch(setUserID(guestId));
+				dispatch(setUserName(guestName));
+				dispatch(setUserEmail(guestEmail));
+
+				await makeReservation(guestId);
+			}
+		} catch (error) {
+			console.error('Error during reservation submission:', error);
+		} finally {
+			setLoading(false); // Stop loader after async operations
+		}
+	};
+
+	/* 	const handleReservationSubmit = async () => {
 		let isValid = true;
 
 		if (!isAuthenticated) {
@@ -143,7 +233,7 @@ export default function CheckoutPage() {
 				console.error('Error during reservation submission:', error);
 			}
 		}
-	};
+	}; */
 
 	const makeReservation = async (guestId) => {
 		try {
@@ -432,10 +522,10 @@ export default function CheckoutPage() {
 										<div className="text-center mt-6">
 											<button
 												type="submit"
-												className="w-full bg-button text-white py-2 rounded-lg hover:bg-buttonHover"
+												className="w-full bg-button text-white py-2 rounded-lg hover:bg-buttonHover flex justify-center items-center gap-2"
 												onClick={handleReservationSubmit}
 											>
-												Reserve now
+												Reserve now {loading && <Spinner />}
 											</button>
 										</div>
 										<div className="text-center mt-4 text-gray-600">

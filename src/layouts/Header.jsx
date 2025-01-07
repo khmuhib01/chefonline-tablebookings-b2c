@@ -140,14 +140,16 @@ export default function Header() {
 														Sign up
 													</NavLink>
 												</li>
-												<li className="font-bold text-[16px] text-button hover:text-buttonHover">
+												<li className="font-bold text-[16px]">
 													<NavLink
 														to="become-a-partner"
 														className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
 														onClick={closeMobileMenu}
 													>
 														<Partner size={25} />
-														<li className="rounded font-bold text-sm md:text-base">Become a partner</li>
+														<li className="rounded font-bold text-sm md:text-base text-button hover:text-buttonHover">
+															Become a partner
+														</li>
 													</NavLink>
 												</li>
 											</div>
@@ -164,7 +166,7 @@ export default function Header() {
 
 									<NavLink
 										to="https://restaurant.tablebookings.co.uk/"
-										className="items-center text-button space-x-2 hidden md:flex"
+										className="items-center text-button space-x-2 hidden md:flex hover:text-buttonHover"
 										onClick={closeMobileMenu}
 										target="_blank"
 									>
