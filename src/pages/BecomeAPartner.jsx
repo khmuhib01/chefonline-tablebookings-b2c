@@ -4,12 +4,15 @@ import PageTitle from '../components/PageTitle';
 import Popup from '../ui-share/Popup';
 import {guestContactUs} from '../api';
 import Spinner from '../ui-share/Spinner';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function BecomeAPartner() {
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState({});
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
 	const [popupMessage, setPopupMessage] = useState('');
+	const [recaptchaToken, setRecaptchaToken] = useState('');
+	// const [errors, setErrors] = useState({});
 
 	const [formData, setFormData] = useState({
 		firstName: '',
@@ -23,6 +26,10 @@ export default function BecomeAPartner() {
 		agreeTerms: false,
 		agreeMarketing: false,
 	});
+
+	const handleRecaptchaChange = (token) => {
+		setRecaptchaToken(token);
+	};
 
 	// Handle input change
 	const handleChange = (e) => {
@@ -273,6 +280,11 @@ export default function BecomeAPartner() {
 							<label className="text-gray-700">
 								I agree to receive email newsletters and marketing communication from TableBookings.
 							</label>
+						</div>
+
+						<div className="col-span-2 mb-4">
+							<ReCAPTCHA sitekey="6LdqgH0qAAAAAH_U11rEQWl73Rm1f3clwQm0RvrT" onChange={handleRecaptchaChange} />
+							{errors.recaptcha && <p className="text-red-500 text-sm">{errors.recaptcha}</p>}
 						</div>
 						<button
 							type="submit"

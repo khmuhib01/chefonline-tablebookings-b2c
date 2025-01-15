@@ -7,6 +7,7 @@ import {setGuestUser, setGuestUserToken} from '../store/reducers/guestUserSlice'
 import Popup from '../ui-share/Popup';
 import {AuthContextGuest} from '../context/AuthContextGuest';
 import PageTitle from '../components/PageTitle';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function GuestLoginPage() {
 	const [email, setEmail] = useState('');
@@ -18,10 +19,16 @@ export default function GuestLoginPage() {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [guestUserData, setGuestUserData] = useState(null);
 	const [guestUserTokenData, setGuestUserTokenData] = useState(null);
+	const [recaptchaToken, setRecaptchaToken] = useState('');
+	const [errors, setErrors] = useState({});
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const {login} = useContext(AuthContextGuest);
+
+	const handleRecaptchaChange = (token) => {
+		setRecaptchaToken(token);
+	};
 
 	const handleOpenPopup = () => {
 		setIsPopupOpen(true);
@@ -144,6 +151,13 @@ export default function GuestLoginPage() {
 												<Link to="/forgot-password" className="text-button">
 													Forgot Password?
 												</Link>
+											</div>
+											<div className="col-span-2 mb-4">
+												<ReCAPTCHA
+													sitekey="6LdqgH0qAAAAAH_U11rEQWl73Rm1f3clwQm0RvrT"
+													onChange={handleRecaptchaChange}
+												/>
+												{errors.recaptcha && <p className="text-red-500 text-sm">{errors.recaptcha}</p>}
 											</div>
 
 											<div className="text-center mt-4">
