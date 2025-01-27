@@ -2,7 +2,7 @@ import React, {useState, useContext, useRef, useEffect} from 'react';
 import {Link, NavLink, useLocation, useNavigate} from 'react-router-dom';
 import SearchComponent from '../components/frontend/SearchComponent';
 import {logoImage} from '../ui-share/Image';
-import {Restaurant, Profile, SignIn, SignUp, VerticalMenu, Menu} from '../ui-share/Icon';
+import {Restaurant, Profile, SignIn, SignUp, VerticalMenu, Menu, Partner} from '../ui-share/Icon';
 import {AuthContextGuest} from '../context/AuthContextGuest';
 
 export default function Header() {
@@ -113,10 +113,17 @@ export default function Header() {
 															<SignUp size={25} />
 															<li className="px-2 py-1 rounded text-black">Sign up</li>
 														</NavLink>
-														{/* <NavLink to="/dashboard" className="flex items-center gap-2 text-button">
+														<NavLink to="/become-a-partner" className="flex items-center gap-2 text-button">
+															<Partner size={25} />
+															<li className="px-2 py-1 rounded text-black">Become a partner</li>
+														</NavLink>
+														<NavLink
+															to="https://restaurant.tablebookings.co.uk/"
+															className="flex items-center gap-2 text-button"
+														>
 															<Restaurant size={25} />
 															<li className="px-2 py-1 rounded text-black">For restaurants</li>
-														</NavLink> */}
+														</NavLink>
 													</ul>
 												</div>
 											)}
@@ -133,12 +140,33 @@ export default function Header() {
 														Sign up
 													</NavLink>
 												</li>
+												<li className="font-bold text-[16px]">
+													<NavLink
+														to="become-a-partner"
+														className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
+														onClick={closeMobileMenu}
+													>
+														<Partner size={25} />
+														<li className="rounded font-bold text-sm md:text-base text-button hover:text-buttonHover">
+															Become a partner
+														</li>
+													</NavLink>
+												</li>
 											</div>
 										</div>
 									)}
+									{/* <NavLink
+										to="become-a-partner"
+										className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
+										onClick={closeMobileMenu}
+									>
+										<Partner size={25} />
+										<li className="rounded font-bold text-sm md:text-base">Become a partner</li>
+									</NavLink> */}
+
 									<NavLink
 										to="https://restaurant.tablebookings.co.uk/"
-										className="flex items-center text-button space-x-2"
+										className="items-center text-button space-x-2 hidden md:flex hover:text-buttonHover"
 										onClick={closeMobileMenu}
 										target="_blank"
 									>

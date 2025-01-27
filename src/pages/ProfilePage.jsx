@@ -75,9 +75,9 @@ export default function ProfilePage() {
 													&bull; Reservation #{reservation.id}
 												</p>
 											</div>
-											<div className="flex items-center gap-4">
+											{/* <div className="flex items-center gap-4">
 												<button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-md">Cancel</button>
-											</div>
+											</div> */}
 										</div>
 									))
 								) : (

@@ -63,7 +63,7 @@ export default function ThankYouPage() {
 								</button> */}
 									<button
 										type="button"
-										className="w-full bg-button text-white py-2 rounded-lg hover:bg-buttonHover focus:outline-none focus:ring-2"
+										className="w-full bg-button text-white py-2 rounded-lg hover:bg-buttonHover"
 										onClick={handleHomeSubmit}
 									>
 										Go To Home
