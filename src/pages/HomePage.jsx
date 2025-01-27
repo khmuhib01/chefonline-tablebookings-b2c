@@ -109,7 +109,6 @@ const HomePage = () => {
 	const fetchRestaurantList = async () => {
 		try {
 			const response = await getAllRestaurants();
-			console.log('Full API Response:', response); // Debug the full response
 
 			if (response?.data?.data) {
 				setRestaurantData(response.data.data); // Ensure the response structure is correct
@@ -124,7 +123,6 @@ const HomePage = () => {
 	const fetchTopRestaurantList = async () => {
 		try {
 			const response = await fetchTopRestaurantListApi();
-			console.log('Full API Response:', response); // Debug the full response
 
 			if (response?.data?.data) {
 				settopRestaurantData(response.data.data); // Ensure the response structure is correct
@@ -140,7 +138,6 @@ const HomePage = () => {
 		console.log('categoryId', categoryId);
 		try {
 			const response = await getAllRestaurants();
-			console.log('API Response:', response.data.data);
 			const filteredData = response.data.data.filter((item) => {
 				return String(item.category) === String(categoryId);
 			});
@@ -153,39 +150,6 @@ const HomePage = () => {
 			console.error('Error fetching restaurants:', error);
 		}
 	};
-
-	const nearByRestaurantData = [
-		{
-			name: 'Ristorante Piperno',
-			location: 'Centro Storico area',
-			cuisine: 'Roman',
-			priceRange: '€€€€',
-			rating: '5.2/6',
-			reviews: 613,
-			tags: ['Romantic', 'Family-friendly', 'Good for groups'],
-			image: 'https://qul.imgix.net/10743789-351f-4217-8e78-68556cc1a767/509827_sld.jpg?auto=format&w=781',
-		},
-		{
-			name: 'Ristorante Pizzeria Gaudi',
-			location: 'Salario area',
-			cuisine: 'Pizza',
-			priceRange: '€€€',
-			rating: '5.0/6',
-			reviews: 293,
-			tags: ['Family-friendly', 'Good for groups'],
-			image: 'https://qul.imgix.net/664bf1d0-97b1-49e4-85a0-70adfafab396/533393_sld.jpg?auto=format&w=781',
-		},
-		{
-			name: 'Babette',
-			location: 'Centro Storico area',
-			cuisine: 'Roman',
-			priceRange: '€€€€',
-			rating: '5.7/6',
-			reviews: 124,
-			tags: ['Romantic', 'Family-friendly', 'Good for groups'],
-			image: 'https://qul.imgix.net/a0e7bf3f-106c-42d0-b903-c382790ca5c4/609323_sld.jpg?auto=format&w=781',
-		},
-	];
 
 	return (
 		<>
@@ -341,15 +305,15 @@ const HomePage = () => {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+					{/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
 						<div>
 							<h2 className="text-4xl font-bold leading-none">
 								Explore local gems! Your next favorite restaurant is just around the corner!
 							</h2>
 							<p className="text-lg text-gray-600 mb-6">Discover and book your perfect table nearby!</p>
-							{/* <button className="px-4 py-2 bg-button text-white rounded-md hover:bg-buttonHover focus:outline-none gap-2 flex items-center justify-center">
+							<button className="px-4 py-2 bg-button text-white rounded-md hover:bg-buttonHover focus:outline-none gap-2 flex items-center justify-center">
 								Discover restaurants
-							</button> */}
+							</button>
 						</div>
 						<div className="space-y-8">
 							{topRestaurantData.map((restaurant, index) => (
@@ -416,7 +380,7 @@ const HomePage = () => {
 								</>
 							)}
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</>

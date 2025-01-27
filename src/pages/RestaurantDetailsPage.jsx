@@ -111,23 +111,23 @@ export default function RestaurantDetailsPage() {
 		}
 	};
 
-	const calculateAroundPrice = () => {
-		const aroundPrice = restaurantDetails?.data?.categories ?? [];
+	// const calculateAroundPrice = () => {
+	// 	const aroundPrice = restaurantDetails?.data?.categories ?? [];
 
-		// Extract and flatten prices
-		const prices = aroundPrice.flatMap((category) => category?.menus?.map((item) => item?.price) || []);
+	// 	// Extract and flatten prices
+	// 	const prices = aroundPrice.flatMap((category) => category?.menus?.map((item) => item?.price) || []);
 
-		// Filter out invalid prices and find the maximum price
-		const maxPrice = Math.max(...prices.filter((price) => price != null));
+	// 	// Filter out invalid prices and find the maximum price
+	// 	const maxPrice = Math.max(...prices.filter((price) => price != null));
 
-		if (maxPrice === 0) {
-			return '0';
-		} else if (maxPrice > 0) {
-			return maxPrice;
-		} else if (maxPrice < 0) {
-			return '0';
-		}
-	};
+	// 	if (maxPrice === 0) {
+	// 		return '0';
+	// 	} else if (maxPrice > 0) {
+	// 		return maxPrice;
+	// 	} else if (maxPrice < 0) {
+	// 		return '0';
+	// 	}
+	// };
 
 	const calculateReviewStats = () => {
 		// Ensure restaurantDetails and its nested properties are defined
@@ -183,12 +183,12 @@ export default function RestaurantDetailsPage() {
 															{restaurantDetails.data?.name || 'Restaurant Name'}
 														</h1>
 													</div>
-													<div className="">
+													{/* <div className="">
 														<p className="text-sm text-bodyText">
 															Dishes priced around:
 															<span className="font-bold">€{calculateAroundPrice()}</span>
 														</p>
-													</div>
+													</div> */}
 												</div>
 
 												<div className="flex-shrink-0 flex flex-col items-center justify-center">
