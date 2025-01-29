@@ -23,11 +23,12 @@ export default function MenuTabComponent({details, files}) {
 			</div>
 
 			{/* Menu Image and PDF Cards */}
+
 			<div className="flex gap-5">
 				{/* Menu Image Card with Photo Viewer */}
-				<div className="w-64 h-40 bg-white rounded-md shadow-md flex flex-col items-center justify-center p-3">
-					<div className="w-full h-28 bg-gray-300 rounded-md flex items-center justify-center overflow-hidden">
-						{menuImage ? (
+				{menuImage ? (
+					<div className="w-64 h-40 bg-white rounded-md shadow-md flex flex-col items-center justify-center p-3">
+						<div className="w-full h-28 bg-gray-300 rounded-md flex items-center justify-center overflow-hidden">
 							<PhotoProvider>
 								<PhotoView src={`${imageBaseUrl}/${menuImage.image}`}>
 									<img
@@ -37,17 +38,15 @@ export default function MenuTabComponent({details, files}) {
 									/>
 								</PhotoView>
 							</PhotoProvider>
-						) : (
-							<p className="text-gray-500">No Image Available</p>
-						)}
+						</div>
+						<p className="text-sm text-gray-700 mt-2">Click to view</p>
 					</div>
-					<p className="text-sm text-gray-700 mt-2">Click to Enlarge</p>
-				</div>
+				) : null}
 
 				{/* PDF Card */}
-				<div className="w-64 h-40 bg-white rounded-md shadow-md flex flex-col items-center justify-center p-3">
-					<div className="w-full h-28 bg-gray-300 rounded-md flex items-center justify-center">
-						{menuPdf ? (
+				{menuPdf ? (
+					<div className="w-64 h-40 bg-white rounded-md shadow-md flex flex-col items-center justify-center p-3">
+						<div className="w-full h-28 bg-gray-300 rounded-md flex items-center justify-center">
 							<a
 								href={`${imageBaseUrl}/${menuPdf.image}`}
 								target="_blank"
@@ -56,12 +55,10 @@ export default function MenuTabComponent({details, files}) {
 							>
 								View PDF
 							</a>
-						) : (
-							<p className="text-gray-500">No PDF Available</p>
-						)}
+						</div>
+						<p className="text-sm text-gray-700 mt-2">Download Menu PDF</p>
 					</div>
-					<p className="text-sm text-gray-700 mt-2">Download Menu PDF</p>
-				</div>
+				) : null}
 			</div>
 
 			{/* Menu Highlights Section */}
