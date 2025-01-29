@@ -248,38 +248,6 @@ export default function GuestRegisterPage() {
 					</div>
 				</div>
 			</div>
-
-			{/* <div className="bg-[#F7F8FA] py-10">
-				<div className="container px-2">
-					<div className="flex flex-col gap-16 w-full">
-						<div className="flex flex-col gap-5">
-							<h1 className="text-center text-2xl text-titleText font-bold">For more information</h1>
-							<div className="max-w-[600px] mx-auto rounded-md w-full">
-								<div className="container mx-auto px-4" style={{userSelect: 'none'}}>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-										
-										<div className="bg-white p-6 rounded-lg shadow-lg border">
-											<h2 className="text-xl font-bold mb-4">Customer Support</h2>
-											<p>T: 0330 380 1000</p>
-											<p>support@tablebookings.co.uk</p>
-											<p>Mon - Fri: 9:30 am - 11:00 pm</p>
-											<p>Sat: 10:00 am - 11:00 pm</p>
-											<p>Sun: 2:00 pm - 11:00 pm</p>
-										</div>
-
-										
-										<div className="bg-white p-6 rounded-lg shadow-lg border">
-											<h2 className="text-xl font-bold mb-4">Sales and Marketing</h2>
-											<p>T: 0203 598 5956</p>
-											<p>hello@tablebookings.co.uk</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div> */}
 		</>
 	);
 }
