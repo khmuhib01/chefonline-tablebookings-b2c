@@ -21,7 +21,6 @@ export default function ResetPassword() {
 
 	useEffect(() => {
 		if (!email) {
-			console.log('No email found in state.');
 			setPopupTitle('Invalid Access');
 			setPopupMessage('Invalid access. Redirecting to login.');
 			setIsPopupOpen(true);

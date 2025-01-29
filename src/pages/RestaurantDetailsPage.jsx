@@ -89,7 +89,6 @@ export default function RestaurantDetailsPage() {
 		try {
 			const response = await restaurantMenuImageOrPdf(data);
 			setFiles(response.data);
-			console.log('response_file', response);
 		} catch (error) {
 			console.error('Error fetching restaurant details:', error);
 		} finally {

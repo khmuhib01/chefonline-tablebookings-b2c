@@ -80,8 +80,6 @@ export default function BecomeAPartner() {
 				message: formData.message,
 			};
 
-			console.log('API Data:', data);
-
 			const response = await guestContactUs(data);
 
 			setPopupMessage(response.message || 'Your message has been sent successfully!');

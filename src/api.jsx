@@ -185,7 +185,6 @@ const resetPassword = async (email, password) => {
 };
 
 const guestContactUs = async (data) => {
-	console.log('api data', data);
 	try {
 		const {data: response} = await api.post('/user/contact-us', data);
 		return response;

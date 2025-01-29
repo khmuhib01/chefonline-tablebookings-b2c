@@ -57,8 +57,6 @@ export default function CheckoutPage() {
 	const storeReservation = useSelector((state) => state.reservations.currentReservation);
 	const storeUser = useSelector((state) => state.guestUser);
 
-	console.log('storeReservation', storeReservation);
-
 	const handleReservationEdit = () => {
 		setIsReservationEdit(!isReservationEdit);
 	};
