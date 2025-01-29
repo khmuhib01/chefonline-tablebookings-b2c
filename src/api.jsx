@@ -309,6 +309,23 @@ const getCheckedOut = async (restaurantId, reservationId, checkedOut) => {
 	}
 };
 
+
+const restaurantMenuImageOrPdf = async (data) => {
+	const token = getToken();
+	const headers = {
+		'Content-Type': 'multipart/form-data',
+		Authorization: `Bearer ${token}`,
+	};
+
+	try {
+		const {data: response} = await api.post('/user/menus-photo-upload', data, {headers});
+		return response;
+	} catch (error) {
+		console.error('Error creating restaurant:', error);
+		throw error;
+	}
+};
+
 export {
 	api,
 	getRestaurantData,
@@ -334,4 +351,5 @@ export {
 	resetPassword,
 	fetchTopRestaurantListApi,
 	guestContactUs,
+	restaurantMenuImageOrPdf,
 };
