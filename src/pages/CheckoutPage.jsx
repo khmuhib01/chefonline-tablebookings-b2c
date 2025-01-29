@@ -36,7 +36,7 @@ export default function CheckoutPage() {
 	const [loading, setLoading] = useState(false);
 
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
-	const [isTimerPaused, setIsTimerPaused] = useState(false); // New state for managing timer pause
+	const [isTimerPaused, setIsTimerPaused] = useState(false);
 
 	const {isAuthenticated} = useContext(AuthContextGuest);
 
@@ -147,91 +147,6 @@ export default function CheckoutPage() {
 			setLoading(false); // Stop loader after async operations
 		}
 	};
-
-	/* 	const handleReservationSubmit = async () => {
-		let isValid = true;
-
-		if (!isAuthenticated) {
-			if (!userFirstName) {
-				setFirstNameError('First name is required.');
-				isValid = false;
-			} else {
-				setFirstNameError('');
-			}
-
-			// Validate last name
-			if (!userLastName) {
-				setLastNameError('Last name is required.');
-				isValid = false;
-			} else {
-				setLastNameError('');
-			}
-
-			// Validate phone number
-			if (!userPhone) {
-				setPhoneError('Phone number is required.');
-				isValid = false;
-			} else if (!/^\d{11}$/.test(userPhone)) {
-				setPhoneError('Phone number must be 10 digits.');
-				isValid = false;
-			} else {
-				setPhoneError('');
-			}
-
-			// Validate email
-			if (!email) {
-				setEmailError('Email is required.');
-				isValid = false;
-			} else if (!/\S+@\S+\.\S+/.test(email)) {
-				setEmailError('Email address is invalid.');
-				isValid = false;
-			} else {
-				setEmailError('');
-			}
-
-			// If any validation fails, stop the function
-			if (!isValid) {
-				return;
-			}
-		}
-
-		if (isAuthenticated) {
-			await makeReservation(storeUser.guestUser.id);
-		} else {
-			const guestData = {
-				first_name: userFirstName || storeUser.first_name,
-				last_name: userLastName || storeUser.last_name,
-				phone: userPhone || storeUser.phone,
-				email: email || storeUser.email,
-				params: 'create',
-			};
-
-			try {
-				const responsePostGuestRegister = await postGuestRegister(guestData);
-				const guestId = responsePostGuestRegister.data.id;
-				const guestName = `${responsePostGuestRegister.data.first_name} ${responsePostGuestRegister.data.last_name}`;
-				const guestEmail = responsePostGuestRegister.data.email;
-
-				// Clear form fields
-				setEmail('');
-				setUserFirstName('');
-				setUserLastName('');
-				setUserPhone('');
-				setUserSpecialRequest('');
-				setUserPromoCode('');
-
-				// Update Redux state
-				dispatch(setUserID(guestId));
-				dispatch(setUserName(guestName));
-				dispatch(setUserEmail(guestEmail));
-
-				// Complete the reservation with the guest ID
-				await makeReservation(guestId);
-			} catch (error) {
-				console.error('Error during reservation submission:', error);
-			}
-		}
-	}; */
 
 	const makeReservation = async (guestId) => {
 		try {
@@ -463,24 +378,16 @@ export default function CheckoutPage() {
 												<label htmlFor="phoneNumber" className="block text-gray-700 font-bold mb-2">
 													Phone number <span className="text-red-500">*</span>
 												</label>
-												<div className="flex">
-													<div className="flex items-center bg-gray-200 px-3 rounded-l-lg border border-r-0 ">
-														<span role="img" aria-label="flag">
-															<Mobile />
-														</span>
-														<span className="ml-2">+44</span>
-													</div>
-													<input
-														type="tel"
-														id="phoneNumber"
-														className="w-full px-3 py-2 border rounded-r-lg border-gray-300 focus:outline-none focus:shadow"
-														placeholder="eg. 0123456789"
-														value={userPhone}
-														onChange={(e) => setUserPhone(e.target.value)}
-														required
-													/>
-													<span className="text-red-500 text-xs">{phoneError}</span>
-												</div>
+												<input
+													type="tel"
+													id="phoneNumber"
+													className="w-full px-3 py-2 border rounded-lg border-gray-300 focus:outline-none focus:shadow"
+													placeholder="eg. 0123456789"
+													value={userPhone}
+													onChange={(e) => setUserPhone(e.target.value)}
+													required
+												/>
+												<span className="text-red-500 text-xs">{phoneError}</span>
 											</div>
 											<div className="text-center mt-4">
 												<p className="text-bodyText hover:underline cursor-pointer" onClick={handleRegister}>
