@@ -38,6 +38,9 @@ export default function CheckoutPage() {
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
 	const [isTimerPaused, setIsTimerPaused] = useState(false);
 
+	const [errorMessage, setErrorMessage] = useState('');
+	const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
+
 	const {isAuthenticated} = useContext(AuthContextGuest);
 
 	const navigate = useNavigate();
@@ -59,6 +62,19 @@ export default function CheckoutPage() {
 
 	const handleReservationEdit = () => {
 		setIsReservationEdit(!isReservationEdit);
+	};
+
+	const handleOpenPopup = () => {
+		setIsPopupOpen(true);
+	};
+
+	const handleOpenErrorPopup = () => {
+		setIsErrorPopupOpen(true);
+	};
+
+	const handleActivate = () => {
+		setIsErrorPopupOpen(false);
+		navigate('/sign-in');
 	};
 
 	const handleReservationSubmit = async () => {
@@ -122,6 +138,14 @@ export default function CheckoutPage() {
 				};
 
 				const responsePostGuestRegister = await postGuestRegister(guestData);
+
+				console.log('responsePostGuestRegister', responsePostGuestRegister.status);
+
+				if (responsePostGuestRegister.status === false) {
+					setErrorMessage('An error occurred. Please try again.');
+					handleOpenErrorPopup();
+					return;
+				}
 				const guestId = responsePostGuestRegister.data.id;
 				const guestName = `${responsePostGuestRegister.data.first_name} ${responsePostGuestRegister.data.last_name}`;
 				const guestEmail = responsePostGuestRegister.data.email;
@@ -474,6 +498,26 @@ export default function CheckoutPage() {
 								Make New Reservation
 							</button>
 						</div>
+					</div>
+				}
+			/>
+
+			<Popup
+				isOpen={isErrorPopupOpen}
+				title="Alert"
+				content={
+					<div className="flex flex-col justify-center items-center">
+						<h1 className="mb-5">
+							We noticed that you've already made a reservation before but your account is still inactive. To proceed,
+							please activate your account.
+						</h1>
+
+						<button
+							className="bg-button text-white py-2 rounded-lg hover:bg-buttonHover block px-2 w-[100px]"
+							onClick={handleActivate}
+						>
+							Ok
+						</button>
 					</div>
 				}
 			/>
