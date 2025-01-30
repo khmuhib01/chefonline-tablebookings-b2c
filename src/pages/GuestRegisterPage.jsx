@@ -7,6 +7,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import Spinner from '../ui-share/Spinner';
 import PageTitle from '../components/PageTitle';
 import ReCAPTCHA from 'react-google-recaptcha';
+import Popup from '../ui-share/Popup';
 
 export default function GuestRegisterPage() {
 	const [email, setEmail] = useState('');
@@ -19,8 +20,17 @@ export default function GuestRegisterPage() {
 	const [recaptchaToken, setRecaptchaToken] = useState('');
 	const [errors, setErrors] = useState({});
 
+	// Popup for login
+	const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+	const [popupLoginMessage, setPopupLoginMessage] = useState('');
+	const [popupTitle, setPopupTitle] = useState('');
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const closePopup = () => {
+		setIsLoginPopupOpen(false);
+	};
 
 	// Validation function
 	const validateForm = () => {
@@ -56,14 +66,23 @@ export default function GuestRegisterPage() {
 			email: email.trim(),
 			password: password.trim(),
 			params: 'create',
+			register_type: 'register',
 		};
 
 		setLoading(true);
 		try {
 			const response = await postGuestRegister(sanitizedData);
-			dispatch(setGuestUser(response));
-			localStorage.setItem('registrationStatus', 'completed');
-			navigate('/registration-success');
+			console.log('response', response);
+
+			if (response.status === false) {
+				setPopupLoginMessage(response.message);
+				setPopupTitle('Registration Failed');
+				setIsLoginPopupOpen(true);
+			} else {
+				dispatch(setGuestUser(response));
+				localStorage.setItem('registrationStatus', 'completed');
+				navigate('/registration-success');
+			}
 		} catch (error) {
 			console.error('Registration failed:', error);
 		} finally {
@@ -79,7 +98,11 @@ export default function GuestRegisterPage() {
 		window.scrollTo(0, 0);
 	}, []);
 
-	useEffect(() => {
+	const handleLogin = () => {
+		navigate('/sign-in');
+	};
+	// prevent page reload and disable right-click
+	/* 	useEffect(() => {
 		// Disable right-click
 		document.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -115,7 +138,7 @@ export default function GuestRegisterPage() {
 			document.removeEventListener('keydown', disableShortcuts);
 			clearInterval(intervalId);
 		};
-	}, []);
+	}, []); */
 
 	return (
 		<>
@@ -248,6 +271,25 @@ export default function GuestRegisterPage() {
 					</div>
 				</div>
 			</div>
+
+			<Popup
+				isOpen={isLoginPopupOpen}
+				onClose={closePopup}
+				title={popupTitle}
+				content={
+					<div className="flex flex-col gap-3">
+						<h1>{popupLoginMessage}</h1>
+						<div className="flex justify-center">
+							<button
+								className="bg-button hover:bg-buttonHover text-white font-bold py-2 px-4 rounded flex items-center gap-x-2 m-auto"
+								onClick={handleLogin}
+							>
+								Sign in
+							</button>
+						</div>
+					</div>
+				}
+			/>
 		</>
 	);
 }

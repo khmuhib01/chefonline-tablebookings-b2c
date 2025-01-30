@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
+import PageTitle from '../components/PageTitle';
 
 export default function PageNotFound() {
 	const navigate = useNavigate();

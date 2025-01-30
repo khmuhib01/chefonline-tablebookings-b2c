@@ -135,11 +135,12 @@ export default function CheckoutPage() {
 					phone: userPhone || storeUser.phone,
 					email: email || storeUser.email,
 					params: 'create',
+					register_type: 'reservation',
 				};
 
 				const responsePostGuestRegister = await postGuestRegister(guestData);
 
-				console.log('responsePostGuestRegister', responsePostGuestRegister.status);
+				console.log('responsePostGuestRegister', responsePostGuestRegister);
 
 				if (responsePostGuestRegister.status === false) {
 					setErrorMessage('An error occurred. Please try again.');

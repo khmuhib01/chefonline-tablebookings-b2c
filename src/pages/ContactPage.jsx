@@ -101,10 +101,6 @@ export default function ContactPage() {
 			newErrors.phoneNumber = 'Phone Number must be exactly 11 digits.';
 		}
 
-		if (!formData.restaurantName) {
-			newErrors.restaurantName = 'Restaurant Name is required.';
-		}
-
 		if (!recaptchaToken) {
 			newErrors.recaptcha = 'Please complete the CAPTCHA verification.';
 		}
@@ -227,7 +223,7 @@ export default function ContactPage() {
 
 										<div className="mb-4">
 											<label htmlFor="restaurantName" className="block text-gray-700 font-bold mb-2">
-												Restaurant Name <span className="text-red-500">*</span>
+												Restaurant Name
 											</label>
 											<input
 												type="text"
