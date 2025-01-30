@@ -63,7 +63,7 @@ export default function MenuTabComponent({details, files}) {
 
 			{/* Menu Highlights Section */}
 			<div className="flex flex-col gap-5 bg-[#232833] rounded-md px-5 py-7">
-				<h3 className="text-white text-2xl font-bold leading-none">Menu highlights</h3>
+				<h3 className="text-white text-2xl font-bold leading-none">Restaurant speciality</h3>
 				<div className="flex flex-col gap-5 w-full">
 					{details?.data?.categories && details.data.categories.length > 0 ? (
 						details.data.categories.map((item, index) => (

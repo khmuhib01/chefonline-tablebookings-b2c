@@ -89,7 +89,7 @@ export default function AboutTabComponent({details}) {
 							<div className="flex justify-between mb-2">
 								<div className="flex items-center gap-2">
 									<Time size={20} className="text-button" />
-									<span className="text-button font-bold">Open today</span>
+									<span className="text-button font-bold">Opening hour</span>
 								</div>
 								{todaySlots.length > 0 ? (
 									<span className="text-bodyText font-bold">{`Opens at ${convertTo12HourFormat(
