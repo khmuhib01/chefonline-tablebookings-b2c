@@ -25,7 +25,8 @@ export default function ContactPage() {
 	// Ref for reCAPTCHA
 	const recaptchaRef = useRef();
 
-	useEffect(() => {
+	// prevent page reload and disable right-click
+	/* 	useEffect(() => {
 		window.scrollTo(0, 0);
 		// Disable right-click
 		document.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -62,7 +63,7 @@ export default function ContactPage() {
 			document.removeEventListener('keydown', disableShortcuts);
 			clearInterval(intervalId);
 		};
-	}, []);
+	}, []); */
 
 	const handleChange = (e) => {
 		const {name, value} = e.target;
@@ -104,14 +105,6 @@ export default function ContactPage() {
 			newErrors.restaurantName = 'Restaurant Name is required.';
 		}
 
-		// if (!formData.message) {
-		// 	newErrors.message = 'Message is required.';
-		// } else if (formData.message.length < 10) {
-		// 	newErrors.message = 'Message must be at least 10 characters.';
-		// } else if (formData.message.length > maxMessageLength) {
-		// 	newErrors.message = `Message must be no more than ${maxMessageLength} characters.`;
-		// }
-
 		if (!recaptchaToken) {
 			newErrors.recaptcha = 'Please complete the CAPTCHA verification.';
 		}
@@ -137,7 +130,10 @@ export default function ContactPage() {
 				post_code: formData.postcode,
 				phone: formData.phoneNumber,
 				message: formData.message,
+				params: 'contact_us',
 			};
+
+			console.log('data', data);
 
 			const response = await guestContactUs(data);
 

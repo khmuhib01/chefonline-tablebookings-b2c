@@ -78,6 +78,7 @@ export default function BecomeAPartner() {
 				post_code: formData.postcode,
 				restaurant_name: formData.restaurantName,
 				message: formData.message,
+				params: 'registration',
 			};
 
 			const response = await guestContactUs(data);

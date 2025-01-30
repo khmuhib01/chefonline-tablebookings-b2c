@@ -220,7 +220,7 @@ export default function RestaurantDetailsPage() {
 											{/* Tabs */}
 											<div className="flex justify-between items-center border-b border-gray-100 bg-white">
 												<div className="flex items-center gap-8">
-													{['About', 'Menu', 'Photos'].map((tab) => (
+													{['About', 'Menu', 'Photos', 'Reviews'].map((tab) => (
 														<div
 															key={tab}
 															className={`cursor-pointer flex flex-col gap-1 border-b-[4px] ${
