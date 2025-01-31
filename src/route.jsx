@@ -31,6 +31,7 @@ import ContactPage from './pages/ContactPage';
 import AboutUsPage from './pages/AboutUsPage';
 import ResetPassword from './pages/ResetPassword';
 import BecomeAPartner from './pages/BecomeAPartner';
+import ResendMail from './pages/ResendMail';
 
 const AppRoutes = () => {
 	return (
@@ -63,6 +64,7 @@ const AppRoutes = () => {
 				<Route path="terms-and-conditions" element={<TermsAndConditionsPage />} />
 				<Route path="contact" element={<ContactPage />} />
 				<Route path="about-us" element={<AboutUsPage />} />
+				<Route path="resend-mail" element={<ResendMail />} />
 
 				{/* Protected routes for guest login */}
 				<Route

@@ -325,6 +325,16 @@ const restaurantMenuImageOrPdf = async (data) => {
 	}
 };
 
+const postResendEmail = async (email) => {
+	try {
+		const {data: response} = await api.post(`/user/resend-email?email=${email}`);
+		return response;
+	} catch (error) {
+		console.error('Error Resend Email:', error);
+		throw error;
+	}
+};
+
 export {
 	api,
 	getRestaurantData,
@@ -351,4 +361,5 @@ export {
 	fetchTopRestaurantListApi,
 	guestContactUs,
 	restaurantMenuImageOrPdf,
+	postResendEmail,
 };

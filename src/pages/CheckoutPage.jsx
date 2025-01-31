@@ -211,6 +211,7 @@ export default function CheckoutPage() {
 				setTimeLeft((prevTime) => {
 					if (prevTime <= 1) {
 						clearInterval(timer);
+						setIsErrorPopupOpen(false);
 						setIsPopupOpen(true);
 						setIsTimerPaused(true); // Pause the timer
 						removeReservation(); // Call async function
@@ -287,6 +288,10 @@ export default function CheckoutPage() {
 	useEffect(() => {
 		window.scrollTo(0, 0); // Scroll to the top of the page when the component mounts
 	}, []);
+
+	const handleResendEmail = () => {
+		navigate('/resend-mail', {state: {email}});
+	};
 
 	return (
 		<>
@@ -513,12 +518,20 @@ export default function CheckoutPage() {
 							please activate your account.
 						</h1>
 
-						<button
-							className="bg-button text-white py-2 rounded-lg hover:bg-buttonHover block px-2 w-[100px]"
-							onClick={handleActivate}
-						>
-							Ok
-						</button>
+						<div className="flex justify-center gap-3">
+							<button
+								className="bg-button text-white py-2 rounded-lg hover:bg-buttonHover block px-2 w-[100px]"
+								onClick={handleActivate}
+							>
+								Ok
+							</button>
+							<button
+								className="border border-button text-button py-2 rounded-lg hover:bg-buttonHover hover:text-white block px-2"
+								onClick={handleResendEmail}
+							>
+								Resend Activation Email
+							</button>
+						</div>
 					</div>
 				}
 			/>
