@@ -75,9 +75,14 @@ export default function GuestRegisterPage() {
 			console.log('response', response);
 
 			if (response.status === false) {
+                setIsLoginPopupOpen(true);
 				setPopupLoginMessage(response.message);
 				setPopupTitle('Registration Failed');
 				setIsLoginPopupOpen(true);
+			} else if (response.status === true && response?.data?.status === 'active') {
+                setIsLoginPopupOpen(true);
+				setPopupLoginMessage(response.message);
+                setPopupTitle('Alert');
 			} else {
 				dispatch(setGuestUser(response));
 				localStorage.setItem('registrationStatus', 'completed');

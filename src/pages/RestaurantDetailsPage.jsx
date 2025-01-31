@@ -189,13 +189,14 @@ export default function RestaurantDetailsPage() {
 														</p>
 													</div> */}
 												</div>
+												{/* Don't delete. This is for the rating */}
 
-												<div className="flex-shrink-0 flex flex-col items-center justify-center">
+												{/* <div className="flex-shrink-0 flex flex-col items-center justify-center">
 													<div className="text-white bg-button font-semibold rounded-full px-3 py-1">
 														{averageRating}/<span className="text-[14px]">5</span>
 													</div>
 													<div className="text-gray-500 text-sm">{totalReviews} reviews</div>
-												</div>
+												</div> */}
 											</div>
 											<div className="">
 												<div className="w-full h-full">
@@ -220,7 +221,7 @@ export default function RestaurantDetailsPage() {
 											{/* Tabs */}
 											<div className="flex justify-between items-center border-b border-gray-100 bg-white">
 												<div className="flex items-center gap-8">
-													{['About', 'Menu', 'Photos', 'Reviews'].map((tab) => (
+													{['About', 'Menu', 'Photos'].map((tab) => (
 														<div
 															key={tab}
 															className={`cursor-pointer flex flex-col gap-1 border-b-[4px] ${
