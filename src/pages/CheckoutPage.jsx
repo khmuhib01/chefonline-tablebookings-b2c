@@ -25,8 +25,8 @@ export default function CheckoutPage() {
 	const [userSpecialRequest, setUserSpecialRequest] = useState('');
 	const [userPromoCode, setUserPromoCode] = useState('');
 	const [reservationComplete, setReservationComplete] = useState(false);
-	const [timeLeft, setTimeLeft] = useState(5); // 5 minutes in seconds
-	const [timeLeftPopup, setTimeLeftPopup] = useState(5);
+	const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+	const [timeLeftPopup, setTimeLeftPopup] = useState(300);
 	const [isReservationEdit, setIsReservationEdit] = useState(false);
 
 	const [firstNameError, setFirstNameError] = useState('');
@@ -229,7 +229,7 @@ export default function CheckoutPage() {
 	};
 
 	const handleContinueReservation = () => {
-		setTimeLeft(5); // Restart the timer
+		setTimeLeft(300); // Restart the timer
 		setIsTimerPaused(false); // Unpause the timer
 		setIsPopupOpen(false); // Close the popup
 	};

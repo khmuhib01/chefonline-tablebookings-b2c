@@ -19,7 +19,7 @@ export default function SearchComponent() {
 	const [inputError, setInputError] = useState('');
 	const [loading, setLoading] = useState(false);
 
-	const storeReservationId = useSelector((state) => state.reservations.currentReservation.reservation_id);
+	const storeReservationUUId = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
 
 	const handleInputChange = (e) => {
 		setInput(e.target.value);
@@ -35,7 +35,7 @@ export default function SearchComponent() {
 		setInputError('');
 		dispatch(clearCurrentReservation());
 
-		if (storeReservationId != null) {
+		if (storeReservationUUId != null) {
 			removeReservation();
 		}
 
@@ -90,7 +90,7 @@ export default function SearchComponent() {
 
 	const removeReservation = async () => {
 		try {
-			const responseRemovedReservation = await getRemoveReservation(storeReservationId);
+			const responseRemovedReservation = await getRemoveReservation(storeReservationUUId);
 			return responseRemovedReservation;
 		} catch (error) {
 			console.error('Error removing reservation:', error);
