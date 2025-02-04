@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {People, Calendar, Time, Mobile, Timer} from '../ui-share/Icon';
 import ReservationComponent from '../components/frontend/ReservationComponent';
-import {useNavigate} from 'react-router-dom';
+import {redirect, useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
 	setReservation_message,
@@ -25,7 +25,8 @@ export default function CheckoutPage() {
 	const [userSpecialRequest, setUserSpecialRequest] = useState('');
 	const [userPromoCode, setUserPromoCode] = useState('');
 	const [reservationComplete, setReservationComplete] = useState(false);
-	const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+	const [timeLeft, setTimeLeft] = useState(5); // 5 minutes in seconds
+	const [timeLeftPopup, setTimeLeftPopup] = useState(5);
 	const [isReservationEdit, setIsReservationEdit] = useState(false);
 
 	const [firstNameError, setFirstNameError] = useState('');
@@ -47,7 +48,6 @@ export default function CheckoutPage() {
 	const dispatch = useDispatch();
 
 	const storeReservationUUId = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
-	const storeReservationId = useSelector((state) => state.reservations.currentReservation.reservation_id);
 	const storeResId = useSelector((state) => state.reservations.currentReservation.res_id);
 	const storeRestaurantName = useSelector((state) => state.reservations.currentReservation.rest_name);
 	const storeStartTime = useSelector((state) => state.reservations.currentReservation.start_time);
@@ -140,8 +140,6 @@ export default function CheckoutPage() {
 
 				const responsePostGuestRegister = await postGuestRegister(guestData);
 
-				console.log('responsePostGuestRegister', responsePostGuestRegister);
-
 				if (responsePostGuestRegister.status === false) {
 					setErrorMessage('An error occurred. Please try again.');
 					handleOpenErrorPopup();
@@ -214,7 +212,7 @@ export default function CheckoutPage() {
 						setIsErrorPopupOpen(false);
 						setIsPopupOpen(true);
 						setIsTimerPaused(true); // Pause the timer
-						removeReservation(); // Call async function
+						// removeReservation(storeReservationUUId); // Call async function
 						return 0;
 					}
 					return prevTime - 1; // Decrement time
@@ -222,35 +220,25 @@ export default function CheckoutPage() {
 			}
 		}, 1000);
 
-		// Define async function
-		const removeReservation = async () => {
-			try {
-				const responseRemovedReservation = await getRemoveReservation(storeReservationId);
-				return responseRemovedReservation;
-			} catch (error) {
-				console.error('Error removing reservation:', error);
-			}
-		};
-
 		return () => clearInterval(timer); // Cleanup timer on component unmount
-	}, [isTimerPaused, storeReservationId]);
+	}, [isTimerPaused, storeReservationUUId]);
 
 	const handleNewReservation = () => {
+		removeReservation(storeReservationUUId);
 		navigate(`/restaurant-details/${storeResId}`);
 	};
 
 	const handleContinueReservation = () => {
-		setTimeLeft(10); // Restart the timer
+		setTimeLeft(5); // Restart the timer
 		setIsTimerPaused(false); // Unpause the timer
 		setIsPopupOpen(false); // Close the popup
 	};
 
 	// Prevent browser tab close and reload
-
-	const removeReservation = async (id) => {
+	const removeReservation = async (uuid) => {
 		try {
-			const responseRemovedReservation = await getRemoveReservation(id);
-			return responseRemovedReservation;
+			const responseRemovedReservation = await getRemoveReservation(uuid);
+			navigate(`/restaurant-details/${storeResId}`);
 		} catch (error) {
 			console.error('Error removing reservation:', error);
 		}
@@ -258,9 +246,9 @@ export default function CheckoutPage() {
 
 	useEffect(() => {
 		const handleBeforeUnload = (event) => {
-			if (storeReservationId != null) {
+			if (storeReservationUUId != null) {
 				// Attempt to remove the reservation; async completion is not guaranteed
-				removeReservation(storeReservationId);
+				removeReservation(storeReservationUUId);
 			}
 			dispatch(clearCurrentReservation());
 
@@ -276,7 +264,7 @@ export default function CheckoutPage() {
 		return () => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
-	}, [storeReservationId, dispatch]);
+	}, [storeReservationUUId, dispatch]);
 
 	// For Timer time formatter
 	const formatTimer = (seconds) => {
@@ -292,6 +280,26 @@ export default function CheckoutPage() {
 	const handleResendEmail = () => {
 		navigate('/resend-mail', {state: {email}});
 	};
+
+	// Handle the reservation popup timer
+	useEffect(() => {
+		let timer;
+		if (isPopupOpen) {
+			timer = setInterval(() => {
+				setTimeLeftPopup((prevTime) => {
+					if (prevTime <= 1) {
+						clearInterval(timer);
+						setIsPopupOpen(false);
+						removeReservation(storeReservationUUId);
+						return 0;
+					}
+					return prevTime - 1;
+				});
+			}, 1000);
+		}
+
+		return () => clearInterval(timer);
+	}, [isPopupOpen]);
 
 	return (
 		<>
@@ -484,7 +492,7 @@ export default function CheckoutPage() {
 
 			<Popup
 				isOpen={isPopupOpen}
-				title="Alert"
+				title="Reservation Alert"
 				content={
 					<div>
 						<h1 className="text-center mb-5">
@@ -504,6 +512,8 @@ export default function CheckoutPage() {
 								Make New Reservation
 							</button>
 						</div>
+						{/* Show the countdown timer in the popup */}
+						<div className="text-center mt-4 font-bold text-red-500">Time Left: {formatTimer(timeLeftPopup)}</div>
 					</div>
 				}
 			/>

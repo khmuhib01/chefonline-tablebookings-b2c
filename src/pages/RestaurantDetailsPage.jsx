@@ -58,6 +58,8 @@ export default function RestaurantDetailsPage() {
 				storeResId,
 				storePerson
 			);
+
+            console.log('response...................reserve now', response);
 			dispatch(setReservationId(response.data.id));
 			dispatch(setReservationUUID(response.data.uuid));
 			dispatch(setReservation_message(response.message));

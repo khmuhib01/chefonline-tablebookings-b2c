@@ -2,6 +2,7 @@ import React from 'react';
 import {appConfig} from '../../../AppConfig';
 import {PhotoProvider, PhotoView} from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
+import {Pdf} from '../../../ui-share/Icon';
 
 export default function MenuTabComponent({details, files}) {
 	const imageBaseUrl = appConfig.baseUrl;
@@ -51,19 +52,19 @@ export default function MenuTabComponent({details, files}) {
 								href={`${imageBaseUrl}/${menuPdf.image}`}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-blue-600 font-semibold underline"
+								className="text-blue-600 font-semibold underline flex flex-col items-center gap-2"
 							>
-								View PDF
+								<Pdf size={50} color="#C1272D" /> View PDF
 							</a>
 						</div>
-						<p className="text-sm text-gray-700 mt-2">Download Menu PDF</p>
+						<p className="text-sm text-gray-700 mt-2">PDF Menu</p>
 					</div>
 				) : null}
 			</div>
 
 			{/* Menu Highlights Section */}
 			<div className="flex flex-col gap-5 bg-[#232833] rounded-md px-5 py-7">
-				<h3 className="text-white text-2xl font-bold leading-none">Restaurant speciality</h3>
+				<h3 className="text-white text-2xl font-bold leading-none">Restaurant specialty</h3>
 				<div className="flex flex-col gap-5 w-full">
 					{details?.data?.categories && details.data.categories.length > 0 ? (
 						details.data.categories.map((item, index) => (

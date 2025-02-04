@@ -124,9 +124,10 @@ const getGuestReservation = async (
 	}
 };
 
-const getRemoveReservation = async (reservationId) => {
+const getRemoveReservation = async (reservationUUId) => {
+	console.log('reservationUUId....................api', reservationUUId);
 	try {
-		const {data} = await api.get(`/user/reservation/reservation-removed?reservation_uuid=${reservationId}`);
+		const {data} = await api.get(`/user/reservation/reservation-removed?reservation_uuid=${reservationUUId}`);
 		return data;
 	} catch (error) {
 		console.error('Error removing reservation:', error);

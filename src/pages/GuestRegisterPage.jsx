@@ -229,16 +229,16 @@ export default function GuestRegisterPage() {
 												Phone number <span className="text-red-500">*</span>
 											</label>
 											<div className="flex">
-												<div className="flex items-center bg-gray-200 px-3 rounded-l-lg border border-r-0">
+												{/* <div className="flex items-center bg-gray-200 px-3 rounded-l-lg border border-r-0">
 													<span role="img" aria-label="flag">
 														<Mobile />
 													</span>
 													<span className="ml-2">+44</span>
-												</div>
+												</div> */}
 												<input
 													type="tel"
 													id="phoneNumber"
-													className="w-full px-3 py-2 border rounded-r-lg border-gray-300 focus:outline-none focus:shadow"
+													className="w-full px-3 py-2 border rounded-lg border-gray-300 focus:outline-none focus:shadow"
 													placeholder="eg. 0123456789"
 													value={mobile}
 													onChange={(e) => setMobile(e.target.value)}

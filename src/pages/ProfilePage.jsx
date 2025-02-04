@@ -15,6 +15,7 @@ export default function ProfilePage() {
 
 	const pendingReservations = allreservation.filter((reservation) => reservation.status === 'pending');
 	const completedReservations = allreservation.filter((reservation) => reservation.status === 'completed');
+	const cancelledReservations = allreservation.filter((reservation) => reservation.status === 'cancelled');
 
 	useEffect(() => {
 		const fetchReservations = async () => {
@@ -32,6 +33,10 @@ export default function ProfilePage() {
 			fetchReservations();
 		}
 	}, [storeGuestUser?.guestUser?.uuid]);
+
+	console.log('cancelledReservations', cancelledReservations);
+	console.log('pendingReservations', pendingReservations);
+	console.log('allReservation', allreservation);
 
 	const renderContent = () => {
 		switch (activeTab) {
@@ -74,6 +79,9 @@ export default function ProfilePage() {
 													Reserved on {new Date(reservation.created_at).toLocaleDateString('en-US')}
 													&bull; Reservation #{reservation.id}
 												</p>
+												<span className="bg-button text-white py-1 px-2 rounded text-xs capitalize">
+													{reservation.status}
+												</span>
 											</div>
 											{/* <div className="flex items-center gap-4">
 												<button className="bg-red-500 text-white font-semibold py-1 px-4 rounded-md">Cancel</button>
@@ -122,14 +130,15 @@ export default function ProfilePage() {
 													&bull; Reservation #{reservation.id}
 												</p>
 											</div>
-											<div className="flex items-center gap-4">
+											{/* Don't remove this code. This is for future use */}
+											{/* <div className="flex items-center gap-4">
 												<button className="bg-blue-500 text-white font-semibold py-1 px-4 rounded-md">
 													Reserve again
 												</button>
 												<button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-md">
 													Leave a review
 												</button>
-											</div>
+											</div> */}
 										</div>
 									))
 								) : (
