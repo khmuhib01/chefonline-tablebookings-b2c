@@ -52,7 +52,10 @@ export default function ThankYouPage() {
 								<h2 className="text-xl font-bold text-titleText leading-none capitalize">
 									Thanks for your reservation
 								</h2>
-								<p className="text-bodyText">Please check your email for your reservation details.</p>
+								<p className="text-bodyText">
+									Please check your email for your reservation details. You must activate your account to make future
+									reservations.
+								</p>
 								<div className="flex items-center gap-3">
 									{/* <button
 									type="button"

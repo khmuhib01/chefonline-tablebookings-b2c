@@ -129,6 +129,67 @@ export default function ProfilePage() {
 													Reserved on {new Date(reservation.created_at).toLocaleDateString('en-US')}
 													&bull; Reservation #{reservation.id}
 												</p>
+
+												<span className="bg-button text-white py-1 px-2 rounded text-xs capitalize">
+													{reservation.status}
+												</span>
+											</div>
+											{/* Don't remove this code. This is for future use */}
+											{/* <div className="flex items-center gap-4">
+												<button className="bg-blue-500 text-white font-semibold py-1 px-4 rounded-md">
+													Reserve again
+												</button>
+												<button className="bg-green-500 text-white font-semibold py-1 px-4 rounded-md">
+													Leave a review
+												</button>
+											</div> */}
+										</div>
+									))
+								) : (
+									<p>No past reservations</p>
+								)}
+							</div>
+						</div>
+
+						{/* Cancelled Reservations */}
+						<div className="mt-10">
+							<h3 className="text-lg font-semibold text-gray-700 mb-4">
+								Cancelled reservations ({cancelledReservations.length})
+							</h3>
+							<div className="flex flex-col gap-3">
+								{cancelledReservations.length > 0 ? (
+									cancelledReservations.map((reservation) => (
+										<div
+											key={reservation.id}
+											className="bg-white shadow rounded-lg p-4 flex flex-col md:flex-row gap-4"
+										>
+											<div className="flex-shrink-0 w-full md:w-[150px] h-[100px] md:h-auto">
+												<img
+													src={
+														reservation.restaurant.avatar
+															? `${baseUrl}/${reservation.restaurant.avatar}`
+															: 'https://via.placeholder.com/150'
+													}
+													alt={reservation.restaurant.name || 'Restaurant'}
+													className="h-full w-full object-cover rounded-lg"
+												/>
+											</div>
+											<div className="flex-grow">
+												<h4 className="font-semibold text-gray-800">
+													{reservation.restaurant.name || 'Restaurant Name'}
+												</h4>
+												<p className="text-sm text-gray-600">
+													{reservation.day}, {reservation.reservation_date} at{' '}
+													{reservation.reservation_time.slice(0, 5)} for {reservation.number_of_people} people
+												</p>
+												<p className="text-sm text-gray-500">
+													Reserved on {new Date(reservation.created_at).toLocaleDateString('en-US')}
+													&bull; Reservation #{reservation.id}
+												</p>
+
+												<span className="bg-button text-white py-1 px-2 rounded text-xs capitalize">
+													{reservation.status}
+												</span>
 											</div>
 											{/* Don't remove this code. This is for future use */}
 											{/* <div className="flex items-center gap-4">
