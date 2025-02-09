@@ -111,12 +111,16 @@ const getGuestReservation = async (
 	endTime,
 	date,
 	day,
-	numberOfPeople
+	numberOfPeople,
+	userSpecialRequest
 ) => {
+	console.log('userSpecialRequest..........api', userSpecialRequest);
 	try {
 		const {data} = await api.get(
-			`/user/reservation/reservation-book?reservation_uuid=${reservationUUid}&guest_id=${guestId}&status=${status}&rest_uuid=${restUUId}&start_time=${startTime}&end_time=${endTime}&date=${date}&day=${day}&number_of_people=${numberOfPeople}`
+			`/user/reservation/reservation-book?reservation_uuid=${reservationUUid}&guest_id=${guestId}&status=${status}&rest_uuid=${restUUId}&start_time=${startTime}&end_time=${endTime}&date=${date}&day=${day}&number_of_people=${numberOfPeople}&noted=${userSpecialRequest}`
 		);
+
+		console.log('Data', data);
 		return data;
 	} catch (error) {
 		console.error('Error fetching guest reservation:', error);
