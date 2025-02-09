@@ -13,6 +13,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import {Comments} from '../ui-share/Icon';
+import {Link} from 'react-router-dom';
 
 const HomePage = () => {
 	const searchResult = useSelector((state) => state.searchResult.searchResult);
@@ -96,16 +97,6 @@ const HomePage = () => {
 		],
 	};
 
-	// const fetchTopRestaurantList = async () => {
-	// 	try {
-	// 		const response = await getTopReviewAllRestaurants();
-	// 		console.log('API Response:', response.data.data);
-	// 		setRestaurantData(response.data.data);
-	// 	} catch (error) {
-	// 		console.error('Error fetching restaurants:', error);
-	// 	}
-	// };
-
 	const fetchRestaurantList = async () => {
 		try {
 			const response = await getAllRestaurants();
@@ -178,43 +169,6 @@ const HomePage = () => {
 
 			<div className="container px-5">
 				<div className="flex flex-col gap-20 py-20">
-					{/*<div className="flex flex-col gap-10">
-						<div className="">
-							<h2 className="text-4xl text-center font-bold leading-none">Discover London’s Top Dining Spots</h2>
-						</div>
-						<div className="flex flex-col gap-2 items-center">
-							<h2 className="text-2xl font-bold leading-none">Book a table at top local restaurants.</h2>
-							<p className="text-bodyText text-xl leading-none">Dine at London’s favourites – your table awaits</p>
-						</div>
-						 <div className="slider-container">
-							<Slider {...settings}>
-								{restaurantData.map((restaurant, index) => (
-									<div key={index} className="pr-4">
-										{' '}
-										<div className="rounded-lg overflow-hidden">
-											<img src={restaurant.image} alt={restaurant.name} className="h-[200px] w-full object-cover" />
-											<h3 className="text-lg font-bold">{restaurant.name}</h3>
-											<div className="flex justify-between items-center">
-												<div className="">
-													<p className="text-sm bodyText">{restaurant.location}</p>
-													<p className="text-sm bodyText font-bold">{restaurant.cuisine}</p>
-												</div>
-
-												<div className="flex flex-col items-end mt-2">
-													<span className="text-green-500 font-bold">{restaurant.rating}</span>
-													<div className="flex items-center gap-2">
-														<Comments color="#9ca3af " />
-														<span className="text-gray-400 text-sm">{restaurant.reviews}</span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								))}
-							</Slider>
-						</div> 
-					</div>*/}
-
 					<div className="w-[100%] md:w-[60%] m-auto">
 						<div className="bg-red-200 rounded-lg p-8 flex flex-col md:flex-row items-center justify-between gap-8">
 							<div>
@@ -257,8 +211,8 @@ const HomePage = () => {
 
 						<div className="flex  justify-center space-x-4 mb-6 overflow-x-auto px-4 w-full">
 							{categories &&
-								[...categories] // Creates a shallow copy of the array to avoid modifying the original
-									.sort((a, b) => a.name.localeCompare(b.name)) // Sorts categories alphabetically by name
+								[...categories]
+									.sort((a, b) => a.name.localeCompare(b.name))
 									.map((category) => (
 										<button
 											key={category.id}
@@ -273,28 +227,35 @@ const HomePage = () => {
 						</div>
 						<div className="flex justify-center px-4 w-full mb-6">
 							{restaurantData.length > 0 ? (
-								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+								<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
 									{restaurantData.map((restaurant, index) => (
-										<div key={index} className="flex flex-col text-center items-center gap-4 p-4">
-											<img
-												src={
-													restaurant?.avatar ? `${imageBaseUrl}${restaurant.avatar}` : 'https://via.placeholder.com/150'
-												}
-												alt={restaurant?.name || 'Restaurant Image'}
-												className="w-28 h-28 object-cover rounded-full"
-											/>
-											<div className="flex-1">
-												<h3 className="text-lg font-bold mb-1">{restaurant?.name || 'Unknown Restaurant'}</h3>
-												<p className="text-gray-500 text-sm mb-2">{restaurant?.category_list?.name || 'N/A'}</p>
-												<div className="flex flex-wrap gap-2 mt-2">
-													{restaurant?.label_tags?.map((tag, tagIndex) => (
-														<span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 text-[12px] rounded">
-															{tag?.name || 'N/A'}
-														</span>
-													))}
+										<Link to={`/restaurant-details/${restaurant.uuid}`} key={index}>
+											<div
+												key={index}
+												className="flex flex-col text-center items-center gap-4 p-4 bg-white shadow-md rounded-md hover:shadow-lg transition duration-300 ease-in-out"
+											>
+												<img
+													src={
+														restaurant?.avatar
+															? `${imageBaseUrl}${restaurant.avatar}`
+															: 'https://via.placeholder.com/150'
+													}
+													alt={restaurant?.name || 'Restaurant Image'}
+													className="w-28 h-28 object-cover rounded-full"
+												/>
+												<div className="flex-1">
+													<h3 className="text-lg font-bold mb-1">{restaurant?.name || 'Unknown Restaurant'}</h3>
+													<p className="text-gray-500 text-sm mb-2">{restaurant?.category_list?.name || 'N/A'}</p>
+													<div className="flex flex-wrap gap-2 mt-2">
+														{restaurant?.label_tags?.map((tag, tagIndex) => (
+															<span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 text-[12px] rounded">
+																{tag?.name || 'N/A'}
+															</span>
+														))}
+													</div>
 												</div>
 											</div>
-										</div>
+										</Link>
 									))}
 								</div>
 							) : (
