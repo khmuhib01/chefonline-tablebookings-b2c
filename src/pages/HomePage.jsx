@@ -24,12 +24,12 @@ const HomePage = () => {
 	const dispatch = useDispatch();
 	const storeReservationId = useSelector((state) => state.reservations.currentReservation.reservation_id);
 	const storeReservationUUID = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
-	console.log('storeReservationUUID', storeReservationUUID);
 	const categoryState = useSelector((state) => state.category);
 	const {categories, loading: categoryLoading, error: categoryError} = categoryState;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [restaurantData, setRestaurantData] = useState([]);
 	const [topRestaurantData, settopRestaurantData] = useState([]);
+	const [isReservationRemoved, setIsReservationRemoved] = useState(false);
 	const imageBaseUrl = appConfig.baseUrl;
 
 	useEffect(() => {
@@ -55,11 +55,40 @@ const HomePage = () => {
 		window.scrollTo(0, 0);
 	}, []);
 
+	// ✅ Prevent duplicate API calls by tracking state
+	// const removeReservation = async () => {
+	// 	try {
+	// 		if (!storeReservationUUID) {
+	// 			return;
+	// 		}
+
+	// 		const responseRemovedReservation = await getRemoveReservation(storeReservationUUID);
+
+	// 		if (responseRemovedReservation?.status === true) {
+	// 			setIsReservationRemoved(true); // ✅ Set state to prevent duplicate calls
+	// 		} else {
+	// 			console.warn('Reservation removal response was unexpected:', responseRemovedReservation);
+	// 		}
+	// 	} catch (error) {
+	// 		if (error.response && error.response.status === 404) {
+	// 			console.warn('Reservation not found, skipping removal.');
+	// 			setIsReservationRemoved(true); // ✅ Mark as removed even if 404 to prevent re-tries
+	// 		} else {
+	// 			console.error('Error removing reservation:', error);
+	// 		}
+	// 	}
+	// };
+
 	const removeReservation = async () => {
 		try {
-			const responseRemovedReservation = await getRemoveReservation(storeReservationUUID);
-			console.log('responseRemovedReservation', responseRemovedReservation);
-			return responseRemovedReservation;
+			if (!storeReservationUUID) {
+				const responseRemovedReservation = await getRemoveReservation(storeReservationUUID);
+				if (responseRemovedReservation?.status === true) {
+					setIsReservationRemoved(true); // ✅ Set state to prevent duplicate calls
+				} else {
+					console.warn('Reservation removal response was unexpected:', responseRemovedReservation);
+				}
+			}
 		} catch (error) {
 			console.error('Error removing reservation:', error);
 		}
@@ -146,18 +175,20 @@ const HomePage = () => {
 	};
 
 	useEffect(() => {
-		if (storeReservationUUID != null && storeReservationUUID !== undefined) {
+		if (storeReservationUUID && !isReservationRemoved) {
 			removeReservation();
 		}
+	}, [storeReservationUUID]); // ✅ Only runs when UUID changes
 
+	useEffect(() => {
 		if (searchResult.data.length > 0) {
 			dispatch(clearSearchResult());
 		}
-	}, [searchResult]);
+	}, []);
 
 	return (
 		<>
-			<PageTitle title="Book a table | Table Booking" description="Home Page Description" />
+			<PageTitle title="Book a table | Table Bookings" description="Home Page Description" />
 
 			<div
 				className="h-[80vh] bg-no-repeat bg-cover bg-center px-5"
