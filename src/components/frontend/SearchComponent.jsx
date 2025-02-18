@@ -20,46 +20,53 @@ export default function SearchComponent() {
 	const [loading, setLoading] = useState(false);
 
 	const storeReservationUUId = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
+	console.log('storeReservationUUId', storeReservationUUId);
 
 	const handleInputChange = (e) => {
 		setInput(e.target.value);
 		setInputError('');
 	};
 
-	// This function can now be triggered by both button click and pressing Enter
 	const handleFindButtonClick = async (e) => {
-		// Prevent the default form submission behavior on Enter key press
 		if (e) e.preventDefault();
 
-		// Reset any previous errors
+		// console.log('Input:', input);
+
+		// Reset previous errors
 		setInputError('');
 		dispatch(clearCurrentReservation());
 
-		if (storeReservationUUId != null) {
-			removeReservation();
-		}
+		//don't delete
+		// if (storeReservationUUId !== null) {
+		// 	removeReservation();
+		// }
 
-		// Variables to hold the restaurant name and postcode for query parameters
+		//const valid_postcode_exp = /^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$/i;
+		const validPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
+
+		// Check if the input is a valid postcode
+		const isPostcode = validPostcodeRegex.test(input.trim());
+
+		// Variables to hold the search parameters
 		let restaurantName = '';
 		let postcode = '';
 
-		// Check if the input is a valid postcode or a restaurant name
-		if (isLondonPostcode(input)) {
-			postcode = input;
+		if (isPostcode) {
+			postcode = input.trim(); // Assign postcode if valid
 		} else {
-			restaurantName = input;
+			restaurantName = input.trim(); // Otherwise, assume it's a restaurant name
 		}
 
 		try {
 			dispatch(setSearchResultLoading());
 			setLoading(true);
 
-			// Pass the appropriate values in the API call
+			// Fetch restaurant data using API
 			const response = await getRestaurantData(restaurantName, postcode, 10);
 			setLoading(false);
 
-			if (response.data.data.length === 0) {
-				// If no data is found, show the "not found" message
+			if (!response.data.data.length) {
+				// Show "not found" error
 				setInputError('Restaurant not found');
 				dispatch(setError('Restaurant not found'));
 			} else {
@@ -67,13 +74,12 @@ export default function SearchComponent() {
 				const currentPage = response.data.current_page;
 				const lastPage = response.data.last_page;
 
-				dispatch(setSearchResult({data: data, currentPage: currentPage, totalPages: lastPage}));
+				dispatch(setSearchResult({data, currentPage, totalPages: lastPage}));
 
-				// Construct the URL with the appropriate parameters
+				// Navigate with appropriate query parameters
 				navigate(`search-result?name=${encodeURIComponent(restaurantName)}&post_code=${encodeURIComponent(postcode)}`);
 			}
 		} catch (error) {
-			// Handle error and stop loading
 			setLoading(false);
 			dispatch(setError(error.response ? error.response.data : error.message));
 			dispatch(setSearchResultError(error.response ? error.response.data : error.message));
@@ -83,10 +89,76 @@ export default function SearchComponent() {
 				state: {error: error.response ? error.response.data : error.message},
 			});
 		} finally {
-			// Ensure loading is stopped regardless of success or failure
 			setLoading(false);
 		}
 	};
+
+	// This function can now be triggered by both button click and pressing Enter
+	// const handleFindButtonClick = async (e) => {
+	// 	// Prevent the default form submission behavior on Enter key press
+	// 	if (e) e.preventDefault();
+
+	//     console.log('imput', input);
+	// 			return;
+
+	// 			// Reset any previous errors
+	// 			setInputError('');
+	// 			dispatch(clearCurrentReservation());
+
+	// 			if (storeReservationUUId != null) {
+	// 				removeReservation();
+	// 			}
+
+	// 			const valid_postcode_exp = '/^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$/i';
+
+	// 	// Variables to hold the restaurant name and postcode for query parameters
+	// 	let restaurantName = '';
+	// 	let postcode = '';
+
+	// 	// Check if the input is a valid postcode or a restaurant name
+	// 	if (isLondonPostcode(input)) {
+	// 		postcode = input;
+	// 	} else {
+	// 		restaurantName = input;
+	// 	}
+
+	// 	try {
+	// 		dispatch(setSearchResultLoading());
+	// 		setLoading(true);
+
+	// 		// Pass the appropriate values in the API call
+	// 		const response = await getRestaurantData(restaurantName, postcode, 10);
+	// 		setLoading(false);
+
+	// 		if (response.data.data.length === 0) {
+	// 			// If no data is found, show the "not found" message
+	// 			setInputError('Restaurant not found');
+	// 			dispatch(setError('Restaurant not found'));
+	// 		} else {
+	// 			const data = response.data.data;
+	// 			const currentPage = response.data.current_page;
+	// 			const lastPage = response.data.last_page;
+
+	// 			dispatch(setSearchResult({data: data, currentPage: currentPage, totalPages: lastPage}));
+
+	// 			// Construct the URL with the appropriate parameters
+	// 			navigate(`search-result?name=${encodeURIComponent(restaurantName)}&post_code=${encodeURIComponent(postcode)}`);
+	// 		}
+	// 	} catch (error) {
+	// 		// Handle error and stop loading
+	// 		setLoading(false);
+	// 		dispatch(setError(error.response ? error.response.data : error.message));
+	// 		dispatch(setSearchResultError(error.response ? error.response.data : error.message));
+
+	// 		// Navigate to search result page with error in the state
+	// 		navigate(`search-result?name=${encodeURIComponent(restaurantName)}&post_code=${encodeURIComponent(postcode)}`, {
+	// 			state: {error: error.response ? error.response.data : error.message},
+	// 		});
+	// 	} finally {
+	// 		// Ensure loading is stopped regardless of success or failure
+	// 		setLoading(false);
+	// 	}
+	// };
 
 	const removeReservation = async () => {
 		try {
