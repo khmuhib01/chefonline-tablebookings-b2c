@@ -7,6 +7,7 @@ import {
 	setError,
 	setSearchResultError,
 	setSearchResultLoading,
+	clearSearchResult,
 } from '../../store/reducers/SearchResultSlice';
 import {getRemoveReservation, getRestaurantData} from '../../api';
 import Spinner from '../../ui-share/Spinner';
@@ -20,7 +21,7 @@ export default function SearchComponent() {
 	const [loading, setLoading] = useState(false);
 
 	const storeReservationUUId = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
-	console.log('storeReservationUUId', storeReservationUUId);
+	// console.log('storeReservationUUId', storeReservationUUId);
 
 	const handleInputChange = (e) => {
 		setInput(e.target.value);
@@ -30,16 +31,14 @@ export default function SearchComponent() {
 	const handleFindButtonClick = async (e) => {
 		if (e) e.preventDefault();
 
-		// console.log('Input:', input);
-
 		// Reset previous errors
 		setInputError('');
 		dispatch(clearCurrentReservation());
 
 		//don't delete
-		// if (storeReservationUUId !== null) {
-		// 	removeReservation();
-		// }
+		if (storeReservationUUId !== null && storeReservationUUId !== undefined) {
+			removeReservation();
+		}
 
 		//const valid_postcode_exp = /^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$/i;
 		const validPostcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
@@ -61,8 +60,11 @@ export default function SearchComponent() {
 			dispatch(setSearchResultLoading());
 			setLoading(true);
 
+			dispatch(clearSearchResult());
 			// Fetch restaurant data using API
 			const response = await getRestaurantData(restaurantName, postcode, 10);
+			console.log('response', response);
+			console.log('response.data.data.length', response.data.data.length);
 			setLoading(false);
 
 			if (!response.data.data.length) {

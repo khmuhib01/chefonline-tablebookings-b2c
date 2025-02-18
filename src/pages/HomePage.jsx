@@ -6,7 +6,7 @@ import {homeBannerImage} from '../ui-share/Image';
 import {clearCurrentReservation} from '../store/reducers/reservationSlice';
 import {getAllRestaurants, getRemoveReservation, fetchTopRestaurantListApi} from '../api';
 import {setCategories, setCategoriesLoading, setCategoriesError} from '../store/reducers/CategorySlice';
-import {setSearchResult, setError} from '../store/reducers/SearchResultSlice';
+import {setSearchResult, setError, clearSearchResult} from '../store/reducers/SearchResultSlice';
 import {appConfig} from '../AppConfig';
 
 import 'slick-carousel/slick/slick.css';
@@ -23,6 +23,8 @@ const HomePage = () => {
 
 	const dispatch = useDispatch();
 	const storeReservationId = useSelector((state) => state.reservations.currentReservation.reservation_id);
+	const storeReservationUUID = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
+	console.log('storeReservationUUID', storeReservationUUID);
 	const categoryState = useSelector((state) => state.category);
 	const {categories, loading: categoryLoading, error: categoryError} = categoryState;
 	const [currentPage, setCurrentPage] = useState(1);
@@ -55,47 +57,48 @@ const HomePage = () => {
 
 	const removeReservation = async () => {
 		try {
-			const responseRemovedReservation = await getRemoveReservation(storeReservationId);
+			const responseRemovedReservation = await getRemoveReservation(storeReservationUUID);
+			console.log('responseRemovedReservation', responseRemovedReservation);
 			return responseRemovedReservation;
 		} catch (error) {
 			console.error('Error removing reservation:', error);
 		}
 	};
 
-	const settings = {
-		dots: true,
-		infinite: false,
-		speed: 500,
-		slidesToShow: 4,
-		slidesToScroll: 4,
-		initialSlide: 0,
-		responsive: [
-			{
-				breakpoint: 1024,
-				settings: {
-					slidesToShow: 3,
-					slidesToScroll: 3,
-					infinite: true,
-					dots: true,
-				},
-			},
-			{
-				breakpoint: 600,
-				settings: {
-					slidesToShow: 2,
-					slidesToScroll: 2,
-					initialSlide: 2,
-				},
-			},
-			{
-				breakpoint: 480,
-				settings: {
-					slidesToShow: 1,
-					slidesToScroll: 1,
-				},
-			},
-		],
-	};
+	// const settings = {
+	// 	dots: true,
+	// 	infinite: false,
+	// 	speed: 500,
+	// 	slidesToShow: 4,
+	// 	slidesToScroll: 4,
+	// 	initialSlide: 0,
+	// 	responsive: [
+	// 		{
+	// 			breakpoint: 1024,
+	// 			settings: {
+	// 				slidesToShow: 3,
+	// 				slidesToScroll: 3,
+	// 				infinite: true,
+	// 				dots: true,
+	// 			},
+	// 		},
+	// 		{
+	// 			breakpoint: 600,
+	// 			settings: {
+	// 				slidesToShow: 2,
+	// 				slidesToScroll: 2,
+	// 				initialSlide: 2,
+	// 			},
+	// 		},
+	// 		{
+	// 			breakpoint: 480,
+	// 			settings: {
+	// 				slidesToShow: 1,
+	// 				slidesToScroll: 1,
+	// 			},
+	// 		},
+	// 	],
+	// };
 
 	const fetchRestaurantList = async () => {
 		try {
@@ -141,6 +144,16 @@ const HomePage = () => {
 			console.error('Error fetching restaurants:', error);
 		}
 	};
+
+	useEffect(() => {
+		if (storeReservationUUID != null && storeReservationUUID !== undefined) {
+			removeReservation();
+		}
+
+		if (searchResult.data.length > 0) {
+			dispatch(clearSearchResult());
+		}
+	}, [searchResult]);
 
 	return (
 		<>
