@@ -96,7 +96,7 @@ export default function SearchResultPage() {
 
 	return (
 		<>
-			<PageTitle title="Search Result Page" description="Search Result Page Description" />
+			<PageTitle title="Search Result | Table Bookings" description="Search Result Page Description" />
 
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">

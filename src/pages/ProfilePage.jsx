@@ -282,7 +282,7 @@ export default function ProfilePage() {
 
 	return (
 		<>
-			<PageTitle title="Profile" description="Home Page Description" />
+			<PageTitle title="Profile | Table Bookings" description="Home Page Description" />
 			<div className="bg-[#F7F8FA] py-10 min-h-screen">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">

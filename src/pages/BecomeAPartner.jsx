@@ -108,7 +108,7 @@ export default function BecomeAPartner() {
 
 	return (
 		<>
-			<PageTitle title="Sign Up" description="Home Page Description" />
+			<PageTitle title="Restaurant Partner | Table Bookings" description="Home Page Description" />
 			<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
 				<div className="flex flex-col gap-5 w-full max-w-[800px] py-10">
 					<div className="flex flex-col gap-y-5">

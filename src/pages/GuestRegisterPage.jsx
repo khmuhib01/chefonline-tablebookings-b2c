@@ -147,7 +147,7 @@ export default function GuestRegisterPage() {
 
 	return (
 		<>
-			<PageTitle title="Sign up" description="Home Page Description" />
+			<PageTitle title="Sign up | Table Bookings" description="Home Page Description" />
 
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">

@@ -103,7 +103,7 @@ export default function ForgotPassword() {
 
 	return (
 		<>
-			<PageTitle title="Forgot Password" description="Reset your password" />
+			<PageTitle title="Forgot Password | Table Bookings" description="Reset your password" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">

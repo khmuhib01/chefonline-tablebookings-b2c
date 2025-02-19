@@ -165,7 +165,7 @@ export default function RestaurantDetailsPage() {
 
 	return (
 		<>
-			<PageTitle title="Menu and Prices" description="Search Result Page Description" />
+			<PageTitle title="Menu and Prices | Table Bookings" description="Search Result Page Description" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="grid grid-cols-1 lg:grid-cols-12 gap-5">

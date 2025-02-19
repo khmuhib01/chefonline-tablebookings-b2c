@@ -62,7 +62,7 @@ export default function ResendMail() {
 
 	return (
 		<>
-			<PageTitle title="Resend Verification Email" description="Get a new verification email" />
+			<PageTitle title="Resend Verification Email | Table Bookings" description="Get a new verification email" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">

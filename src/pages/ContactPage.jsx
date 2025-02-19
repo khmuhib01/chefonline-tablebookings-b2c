@@ -157,7 +157,7 @@ export default function ContactPage() {
 
 	return (
 		<>
-			<PageTitle title="Contact Us" description="Get in touch with us" />
+			<PageTitle title="Contact Us | Table Bookings" description="Get in touch with us" />
 
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container mx-auto px-4">
