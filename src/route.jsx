@@ -57,7 +57,7 @@ const AppRoutes = () => {
 				<Route path="sign-in" element={<GuestLoginPage />} />
 				<Route path="sign-up" element={<GuestRegisterPage />} />
 
-				<Route path="become-a-partner" element={<BecomeAPartner />} />
+				<Route path="partner" element={<BecomeAPartner />} />
 
 				<Route path="faq" element={<FaqPage />} />
 				<Route path="privacy-policy" element={<PrivacyPolicyPage />} />
