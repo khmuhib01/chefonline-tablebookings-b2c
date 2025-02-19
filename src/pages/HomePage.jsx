@@ -288,7 +288,9 @@ const HomePage = () => {
 													className="w-28 h-28 object-cover rounded-full"
 												/>
 												<div className="flex-1">
-													<h3 className="text-lg font-bold mb-1">{restaurant?.name || 'Unknown Restaurant'}</h3>
+													<h3 className="text-lg font-bold mb-1 h-[65px]">
+														{restaurant?.name || 'Unknown Restaurant'}
+													</h3>
 													<p className="text-gray-500 text-sm mb-2">{restaurant?.category_list?.name || 'N/A'}</p>
 													<div className="flex flex-wrap gap-2 mt-2">
 														{restaurant?.label_tags?.map((tag, tagIndex) => (
