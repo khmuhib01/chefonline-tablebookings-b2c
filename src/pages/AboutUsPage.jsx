@@ -52,26 +52,6 @@ const AboutUsPage = () => {
 					</p>
 				</div>
 			</div>
-
-			{/* Team Section */}
-			<div className="bg-gray-100 py-16">
-				<div className="container mx-auto">
-					<h2 className="text-4xl font-bold text-center mb-10">Meet the Team</h2>
-					<div className="flex flex-wrap justify-center gap-8">
-						{/* Example Team Member */}
-						<div className="bg-white p-6 rounded-lg shadow-lg text-center w-64">
-							<div className="mb-4">
-								<div className="rounded-full w-32 h-32 mx-auto overflow-hidden">
-									<img src="/images/sir.jpg" alt="Team Member" className="w-full h-full object-fill" />
-								</div>
-							</div>
-							<h3 className="text-xl font-semibold mb-2">Mohammad Munim</h3>
-							<p className="text-gray-600">CEO & Founder</p>
-						</div>
-						{/* Add more team members similarly */}
-					</div>
-				</div>
-			</div>
 		</>
 	);
 };
