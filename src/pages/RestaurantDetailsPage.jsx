@@ -11,7 +11,7 @@ import {appConfig} from '../AppConfig';
 import {LazyLoadImage} from 'react-lazy-load-image-component';
 import CustomButton from '../ui-share/CustomButton';
 import {useSelector, useDispatch} from 'react-redux';
-import {getGuestReservationId} from '../api';
+import {getGuestReservationId, restaurantMenuImageOrPdf} from '../api';
 import {
 	setReservation_message,
 	setReservationId,
@@ -28,6 +28,8 @@ export default function RestaurantDetailsPage() {
 	const [activeTab, setActiveTab] = useState('About');
 	const [restaurantDetails, setRestaurantDetails] = useState({});
 	const [loading, setLoading] = useState(true);
+
+	const [files, setFiles] = useState([]);
 
 	const {restaurantId} = useParams();
 	const imageBaseUrl = appConfig.baseUrl;
@@ -56,6 +58,8 @@ export default function RestaurantDetailsPage() {
 				storeResId,
 				storePerson
 			);
+
+            console.log('response...................reserve now', response);
 			dispatch(setReservationId(response.data.id));
 			dispatch(setReservationUUID(response.data.uuid));
 			dispatch(setReservation_message(response.message));
@@ -78,10 +82,25 @@ export default function RestaurantDetailsPage() {
 		}
 	};
 
+	const fetchMenuFile = async () => {
+		const data = {
+			rest_uuid: restaurantId,
+			params: 'info',
+		};
+
+		try {
+			const response = await restaurantMenuImageOrPdf(data);
+			setFiles(response.data);
+		} catch (error) {
+			console.error('Error fetching restaurant details:', error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		// const today = formatDate(new Date());
-		// setTodayDate(today);
 		fetchRestaurantDetails();
+		fetchMenuFile();
 	}, [restaurantId]);
 
 	useEffect(() => {
@@ -101,31 +120,13 @@ export default function RestaurantDetailsPage() {
 			case 'About':
 				return <AboutTabComponent details={restaurantDetails} />;
 			case 'Menu':
-				return <MenuTabComponent details={restaurantDetails} />;
+				return <MenuTabComponent details={restaurantDetails} files={files} />;
 			case 'Photos':
 				return <PhotoTabComponent details={restaurantDetails} />;
 			case 'Reviews':
 				return <ReviewsTabComponent details={restaurantDetails} />;
 			default:
 				return null;
-		}
-	};
-
-	const calculateAroundPrice = () => {
-		const aroundPrice = restaurantDetails?.data?.categories ?? [];
-
-		// Extract and flatten prices
-		const prices = aroundPrice.flatMap((category) => category?.menus?.map((item) => item?.price) || []);
-
-		// Filter out invalid prices and find the maximum price
-		const maxPrice = Math.max(...prices.filter((price) => price != null));
-
-		if (maxPrice === 0) {
-			return '0';
-		} else if (maxPrice > 0) {
-			return maxPrice;
-		} else if (maxPrice < 0) {
-			return '0';
 		}
 	};
 
@@ -164,7 +165,7 @@ export default function RestaurantDetailsPage() {
 
 	return (
 		<>
-			<PageTitle title="Menu and Prices" description="Search Result Page Description" />
+			<PageTitle title="Menu and Prices | Table Bookings" description="Search Result Page Description" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -183,20 +184,21 @@ export default function RestaurantDetailsPage() {
 															{restaurantDetails.data?.name || 'Restaurant Name'}
 														</h1>
 													</div>
-													<div className="">
+													{/* <div className="">
 														<p className="text-sm text-bodyText">
 															Dishes priced around:
 															<span className="font-bold">€{calculateAroundPrice()}</span>
 														</p>
-													</div>
+													</div> */}
 												</div>
+												{/* Don't delete. This is for the rating */}
 
-												<div className="flex-shrink-0 flex flex-col items-center justify-center">
+												{/* <div className="flex-shrink-0 flex flex-col items-center justify-center">
 													<div className="text-white bg-button font-semibold rounded-full px-3 py-1">
 														{averageRating}/<span className="text-[14px]">5</span>
 													</div>
 													<div className="text-gray-500 text-sm">{totalReviews} reviews</div>
-												</div>
+												</div> */}
 											</div>
 											<div className="">
 												<div className="w-full h-full">
@@ -221,7 +223,7 @@ export default function RestaurantDetailsPage() {
 											{/* Tabs */}
 											<div className="flex justify-between items-center border-b border-gray-100 bg-white">
 												<div className="flex items-center gap-8">
-													{['About', 'Menu', 'Photos', 'Reviews'].map((tab) => (
+													{['About', 'Menu', 'Photos'].map((tab) => (
 														<div
 															key={tab}
 															className={`cursor-pointer flex flex-col gap-1 border-b-[4px] ${

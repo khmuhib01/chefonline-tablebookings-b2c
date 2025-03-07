@@ -31,6 +31,7 @@ import {FaUserCheck} from 'react-icons/fa';
 import {FiUserPlus} from 'react-icons/fi';
 import {CiMenuFries} from 'react-icons/ci';
 import {FaHandshake} from 'react-icons/fa6';
+import {FaFilePdf} from 'react-icons/fa6';
 
 export const Calendar = CalendarIcon;
 export const People = FaPeopleGroup;
@@ -65,3 +66,4 @@ export const SignIn = FaUserCheck;
 export const SignUp = FiUserPlus;
 export const Menu = CiMenuFries;
 export const Partner = FaHandshake;
+export const Pdf = FaFilePdf;

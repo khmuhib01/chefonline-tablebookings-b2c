@@ -7,6 +7,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import Spinner from '../ui-share/Spinner';
 import PageTitle from '../components/PageTitle';
 import ReCAPTCHA from 'react-google-recaptcha';
+import Popup from '../ui-share/Popup';
 
 export default function GuestRegisterPage() {
 	const [email, setEmail] = useState('');
@@ -19,8 +20,17 @@ export default function GuestRegisterPage() {
 	const [recaptchaToken, setRecaptchaToken] = useState('');
 	const [errors, setErrors] = useState({});
 
+	// Popup for login
+	const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+	const [popupLoginMessage, setPopupLoginMessage] = useState('');
+	const [popupTitle, setPopupTitle] = useState('');
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const closePopup = () => {
+		setIsLoginPopupOpen(false);
+	};
 
 	// Validation function
 	const validateForm = () => {
@@ -56,14 +66,28 @@ export default function GuestRegisterPage() {
 			email: email.trim(),
 			password: password.trim(),
 			params: 'create',
+			register_type: 'register',
 		};
 
 		setLoading(true);
 		try {
 			const response = await postGuestRegister(sanitizedData);
-			dispatch(setGuestUser(response));
-			localStorage.setItem('registrationStatus', 'completed');
-			navigate('/registration-success');
+			console.log('response', response);
+
+			if (response.status === false) {
+                setIsLoginPopupOpen(true);
+				setPopupLoginMessage(response.message);
+				setPopupTitle('Registration Failed');
+				setIsLoginPopupOpen(true);
+			} else if (response.status === true && response?.data?.status === 'active') {
+                setIsLoginPopupOpen(true);
+				setPopupLoginMessage(response.message);
+                setPopupTitle('Alert');
+			} else {
+				dispatch(setGuestUser(response));
+				localStorage.setItem('registrationStatus', 'completed');
+				navigate('/registration-success');
+			}
 		} catch (error) {
 			console.error('Registration failed:', error);
 		} finally {
@@ -79,7 +103,11 @@ export default function GuestRegisterPage() {
 		window.scrollTo(0, 0);
 	}, []);
 
-	useEffect(() => {
+	const handleLogin = () => {
+		navigate('/sign-in');
+	};
+	// prevent page reload and disable right-click
+	/* 	useEffect(() => {
 		// Disable right-click
 		document.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -115,11 +143,11 @@ export default function GuestRegisterPage() {
 			document.removeEventListener('keydown', disableShortcuts);
 			clearInterval(intervalId);
 		};
-	}, []);
+	}, []); */
 
 	return (
 		<>
-			<PageTitle title="Sign up" description="Home Page Description" />
+			<PageTitle title="Sign up | Table Bookings" description="Home Page Description" />
 
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
@@ -201,16 +229,16 @@ export default function GuestRegisterPage() {
 												Phone number <span className="text-red-500">*</span>
 											</label>
 											<div className="flex">
-												<div className="flex items-center bg-gray-200 px-3 rounded-l-lg border border-r-0">
+												{/* <div className="flex items-center bg-gray-200 px-3 rounded-l-lg border border-r-0">
 													<span role="img" aria-label="flag">
 														<Mobile />
 													</span>
 													<span className="ml-2">+44</span>
-												</div>
+												</div> */}
 												<input
 													type="tel"
 													id="phoneNumber"
-													className="w-full px-3 py-2 border rounded-r-lg border-gray-300 focus:outline-none focus:shadow"
+													className="w-full px-3 py-2 border rounded-lg border-gray-300 focus:outline-none focus:shadow"
 													placeholder="eg. 0123456789"
 													value={mobile}
 													onChange={(e) => setMobile(e.target.value)}
@@ -249,37 +277,24 @@ export default function GuestRegisterPage() {
 				</div>
 			</div>
 
-			{/* <div className="bg-[#F7F8FA] py-10">
-				<div className="container px-2">
-					<div className="flex flex-col gap-16 w-full">
-						<div className="flex flex-col gap-5">
-							<h1 className="text-center text-2xl text-titleText font-bold">For more information</h1>
-							<div className="max-w-[600px] mx-auto rounded-md w-full">
-								<div className="container mx-auto px-4" style={{userSelect: 'none'}}>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-										
-										<div className="bg-white p-6 rounded-lg shadow-lg border">
-											<h2 className="text-xl font-bold mb-4">Customer Support</h2>
-											<p>T: 0330 380 1000</p>
-											<p>support@tablebookings.co.uk</p>
-											<p>Mon - Fri: 9:30 am - 11:00 pm</p>
-											<p>Sat: 10:00 am - 11:00 pm</p>
-											<p>Sun: 2:00 pm - 11:00 pm</p>
-										</div>
-
-										
-										<div className="bg-white p-6 rounded-lg shadow-lg border">
-											<h2 className="text-xl font-bold mb-4">Sales and Marketing</h2>
-											<p>T: 0203 598 5956</p>
-											<p>hello@tablebookings.co.uk</p>
-										</div>
-									</div>
-								</div>
-							</div>
+			<Popup
+				isOpen={isLoginPopupOpen}
+				onClose={closePopup}
+				title={popupTitle}
+				content={
+					<div className="flex flex-col gap-3">
+						<h1>{popupLoginMessage}</h1>
+						<div className="flex justify-center">
+							<button
+								className="bg-button hover:bg-buttonHover text-white font-bold py-2 px-4 rounded flex items-center gap-x-2 m-auto"
+								onClick={handleLogin}
+							>
+								Sign in
+							</button>
 						</div>
 					</div>
-				</div>
-			</div> */}
+				}
+			/>
 		</>
 	);
 }

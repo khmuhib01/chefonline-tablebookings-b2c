@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {People, Calendar, Time, Mobile, Timer} from '../ui-share/Icon';
 import ReservationComponent from '../components/frontend/ReservationComponent';
-import {useNavigate} from 'react-router-dom';
+import {redirect, useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
 	setReservation_message,
@@ -26,7 +26,10 @@ export default function CheckoutPage() {
 	const [userPromoCode, setUserPromoCode] = useState('');
 	const [reservationComplete, setReservationComplete] = useState(false);
 	const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+	const [timeLeftPopup, setTimeLeftPopup] = useState(300);
 	const [isReservationEdit, setIsReservationEdit] = useState(false);
+
+	const [getGuestReservationState, setGuestReservationState] = useState('');
 
 	const [firstNameError, setFirstNameError] = useState('');
 	const [lastNameError, setLastNameError] = useState('');
@@ -36,7 +39,10 @@ export default function CheckoutPage() {
 	const [loading, setLoading] = useState(false);
 
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
-	const [isTimerPaused, setIsTimerPaused] = useState(false); // New state for managing timer pause
+	const [isTimerPaused, setIsTimerPaused] = useState(false);
+
+	const [errorMessage, setErrorMessage] = useState('');
+	const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
 
 	const {isAuthenticated} = useContext(AuthContextGuest);
 
@@ -44,7 +50,6 @@ export default function CheckoutPage() {
 	const dispatch = useDispatch();
 
 	const storeReservationUUId = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
-	const storeReservationId = useSelector((state) => state.reservations.currentReservation.reservation_id);
 	const storeResId = useSelector((state) => state.reservations.currentReservation.res_id);
 	const storeRestaurantName = useSelector((state) => state.reservations.currentReservation.rest_name);
 	const storeStartTime = useSelector((state) => state.reservations.currentReservation.start_time);
@@ -57,10 +62,22 @@ export default function CheckoutPage() {
 	const storeReservation = useSelector((state) => state.reservations.currentReservation);
 	const storeUser = useSelector((state) => state.guestUser);
 
-	console.log('storeReservation', storeReservation);
-
 	const handleReservationEdit = () => {
 		setIsReservationEdit(!isReservationEdit);
+	};
+
+	const handleOpenPopup = () => {
+		setIsPopupOpen(true);
+	};
+
+	const handleOpenErrorPopup = () => {
+		setIsErrorPopupOpen(true);
+	};
+
+	const handleActivate = () => {
+		removeReservation(storeReservationUUId);
+		setIsErrorPopupOpen(false);
+		navigate('/sign-in');
 	};
 
 	const handleReservationSubmit = async () => {
@@ -116,14 +133,33 @@ export default function CheckoutPage() {
 				await makeReservation(storeUser.guestUser.id);
 			} else {
 				const guestData = {
-					first_name: userFirstName || storeUser.first_name,
-					last_name: userLastName || storeUser.last_name,
-					phone: userPhone || storeUser.phone,
-					email: email || storeUser.email,
+					first_name: userFirstName,
+					last_name: userLastName,
+					phone: userPhone,
+					email: email,
 					params: 'create',
+					register_type: 'reservation',
 				};
 
 				const responsePostGuestRegister = await postGuestRegister(guestData);
+				setGuestReservationState(responsePostGuestRegister);
+
+				if (responsePostGuestRegister.status === false && responsePostGuestRegister?.data?.status === 'inactive') {
+					setErrorMessage(responsePostGuestRegister.message);
+					handleOpenErrorPopup();
+					return;
+				} else if (responsePostGuestRegister.status === false && responsePostGuestRegister?.data?.status === 'active') {
+					setErrorMessage(responsePostGuestRegister.message);
+					handleOpenErrorPopup();
+					return;
+				}
+
+				if (responsePostGuestRegister.status === false) {
+					setErrorMessage('An error occurred. Please try again.');
+					handleOpenErrorPopup();
+					return;
+				}
+
 				const guestId = responsePostGuestRegister.data.id;
 				const guestName = `${responsePostGuestRegister.data.first_name} ${responsePostGuestRegister.data.last_name}`;
 				const guestEmail = responsePostGuestRegister.data.email;
@@ -150,92 +186,9 @@ export default function CheckoutPage() {
 		}
 	};
 
-	/* 	const handleReservationSubmit = async () => {
-		let isValid = true;
-
-		if (!isAuthenticated) {
-			if (!userFirstName) {
-				setFirstNameError('First name is required.');
-				isValid = false;
-			} else {
-				setFirstNameError('');
-			}
-
-			// Validate last name
-			if (!userLastName) {
-				setLastNameError('Last name is required.');
-				isValid = false;
-			} else {
-				setLastNameError('');
-			}
-
-			// Validate phone number
-			if (!userPhone) {
-				setPhoneError('Phone number is required.');
-				isValid = false;
-			} else if (!/^\d{11}$/.test(userPhone)) {
-				setPhoneError('Phone number must be 10 digits.');
-				isValid = false;
-			} else {
-				setPhoneError('');
-			}
-
-			// Validate email
-			if (!email) {
-				setEmailError('Email is required.');
-				isValid = false;
-			} else if (!/\S+@\S+\.\S+/.test(email)) {
-				setEmailError('Email address is invalid.');
-				isValid = false;
-			} else {
-				setEmailError('');
-			}
-
-			// If any validation fails, stop the function
-			if (!isValid) {
-				return;
-			}
-		}
-
-		if (isAuthenticated) {
-			await makeReservation(storeUser.guestUser.id);
-		} else {
-			const guestData = {
-				first_name: userFirstName || storeUser.first_name,
-				last_name: userLastName || storeUser.last_name,
-				phone: userPhone || storeUser.phone,
-				email: email || storeUser.email,
-				params: 'create',
-			};
-
-			try {
-				const responsePostGuestRegister = await postGuestRegister(guestData);
-				const guestId = responsePostGuestRegister.data.id;
-				const guestName = `${responsePostGuestRegister.data.first_name} ${responsePostGuestRegister.data.last_name}`;
-				const guestEmail = responsePostGuestRegister.data.email;
-
-				// Clear form fields
-				setEmail('');
-				setUserFirstName('');
-				setUserLastName('');
-				setUserPhone('');
-				setUserSpecialRequest('');
-				setUserPromoCode('');
-
-				// Update Redux state
-				dispatch(setUserID(guestId));
-				dispatch(setUserName(guestName));
-				dispatch(setUserEmail(guestEmail));
-
-				// Complete the reservation with the guest ID
-				await makeReservation(guestId);
-			} catch (error) {
-				console.error('Error during reservation submission:', error);
-			}
-		}
-	}; */
-
 	const makeReservation = async (guestId) => {
+		console.log('userSpecialRequest', userSpecialRequest);
+		// return;
 		try {
 			const responseGetReservation = await getGuestReservation(
 				storeReservationUUId,
@@ -246,7 +199,8 @@ export default function CheckoutPage() {
 				storeEndTime,
 				storeDate,
 				storeDay,
-				storePerson
+				storePerson,
+				userSpecialRequest
 			);
 			dispatch(setReservation_message(responseGetReservation.message));
 			setReservationComplete(true);
@@ -273,9 +227,9 @@ export default function CheckoutPage() {
 				setTimeLeft((prevTime) => {
 					if (prevTime <= 1) {
 						clearInterval(timer);
+						setIsErrorPopupOpen(false);
 						setIsPopupOpen(true);
 						setIsTimerPaused(true); // Pause the timer
-						removeReservation(); // Call async function
 						return 0;
 					}
 					return prevTime - 1; // Decrement time
@@ -283,35 +237,25 @@ export default function CheckoutPage() {
 			}
 		}, 1000);
 
-		// Define async function
-		const removeReservation = async () => {
-			try {
-				const responseRemovedReservation = await getRemoveReservation(storeReservationId);
-				return responseRemovedReservation;
-			} catch (error) {
-				console.error('Error removing reservation:', error);
-			}
-		};
-
 		return () => clearInterval(timer); // Cleanup timer on component unmount
-	}, [isTimerPaused, storeReservationId]);
+	}, [isTimerPaused, storeReservationUUId]);
 
 	const handleNewReservation = () => {
+		removeReservation(storeReservationUUId);
 		navigate(`/restaurant-details/${storeResId}`);
 	};
 
 	const handleContinueReservation = () => {
-		setTimeLeft(10); // Restart the timer
+		setTimeLeft(300); // Restart the timer
 		setIsTimerPaused(false); // Unpause the timer
 		setIsPopupOpen(false); // Close the popup
 	};
 
 	// Prevent browser tab close and reload
-
-	const removeReservation = async (id) => {
+	const removeReservation = async (uuid) => {
 		try {
-			const responseRemovedReservation = await getRemoveReservation(id);
-			return responseRemovedReservation;
+			const responseRemovedReservation = await getRemoveReservation(uuid);
+			// navigate(`/restaurant-details/${storeResId}`);
 		} catch (error) {
 			console.error('Error removing reservation:', error);
 		}
@@ -319,9 +263,9 @@ export default function CheckoutPage() {
 
 	useEffect(() => {
 		const handleBeforeUnload = (event) => {
-			if (storeReservationId != null) {
+			if (storeReservationUUId != null) {
 				// Attempt to remove the reservation; async completion is not guaranteed
-				removeReservation(storeReservationId);
+				removeReservation(storeReservationUUId);
 			}
 			dispatch(clearCurrentReservation());
 
@@ -337,7 +281,7 @@ export default function CheckoutPage() {
 		return () => {
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
-	}, [storeReservationId, dispatch]);
+	}, [storeReservationUUId, dispatch]);
 
 	// For Timer time formatter
 	const formatTimer = (seconds) => {
@@ -350,9 +294,38 @@ export default function CheckoutPage() {
 		window.scrollTo(0, 0); // Scroll to the top of the page when the component mounts
 	}, []);
 
+	const handleResendEmail = () => {
+		navigate('/resend-mail', {state: {email}});
+	};
+
+	const handleLoginButton = () => {
+		removeReservation(storeReservationUUId);
+		navigate('/sign-in');
+	};
+
+	// Handle the reservation popup timer
+	useEffect(() => {
+		let timer;
+		if (isPopupOpen) {
+			timer = setInterval(() => {
+				setTimeLeftPopup((prevTime) => {
+					if (prevTime <= 1) {
+						clearInterval(timer);
+						setIsPopupOpen(false);
+						removeReservation(storeReservationUUId);
+						return 0;
+					}
+					return prevTime - 1;
+				});
+			}, 1000);
+		}
+
+		return () => clearInterval(timer);
+	}, [isPopupOpen]);
+
 	return (
 		<>
-			<PageTitle title="Checkout" description="Home Page Description" />
+			<PageTitle title="Checkout | Table Bookings" description="Home Page Description" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">
@@ -465,24 +438,16 @@ export default function CheckoutPage() {
 												<label htmlFor="phoneNumber" className="block text-gray-700 font-bold mb-2">
 													Phone number <span className="text-red-500">*</span>
 												</label>
-												<div className="flex">
-													<div className="flex items-center bg-gray-200 px-3 rounded-l-lg border border-r-0 ">
-														<span role="img" aria-label="flag">
-															<Mobile />
-														</span>
-														<span className="ml-2">+44</span>
-													</div>
-													<input
-														type="tel"
-														id="phoneNumber"
-														className="w-full px-3 py-2 border rounded-r-lg border-gray-300 focus:outline-none focus:shadow"
-														placeholder="eg. 0123456789"
-														value={userPhone}
-														onChange={(e) => setUserPhone(e.target.value)}
-														required
-													/>
-													<span className="text-red-500 text-xs">{phoneError}</span>
-												</div>
+												<input
+													type="tel"
+													id="phoneNumber"
+													className="w-full px-3 py-2 border rounded-lg border-gray-300 focus:outline-none focus:shadow"
+													placeholder="eg. 0123456789"
+													value={userPhone}
+													onChange={(e) => setUserPhone(e.target.value)}
+													required
+												/>
+												<span className="text-red-500 text-xs">{phoneError}</span>
 											</div>
 											<div className="text-center mt-4">
 												<p className="text-bodyText hover:underline cursor-pointer" onClick={handleRegister}>
@@ -498,7 +463,7 @@ export default function CheckoutPage() {
 											<label htmlFor="specialRequest" className="block text-gray-700 font-bold mb-2">
 												Special request?
 											</label>
-											<input
+											<textarea
 												type="text"
 												id="specialRequest"
 												placeholder="E.g. table preference, space for a stroller..."
@@ -507,7 +472,7 @@ export default function CheckoutPage() {
 												onChange={(e) => setUserSpecialRequest(e.target.value)}
 											/>
 										</div>
-										<div className="mb-4">
+										{/* <div className="mb-4">
 											<label htmlFor="promoCode" className="block text-gray-700 font-bold mb-2">
 												Promo code
 											</label>
@@ -518,7 +483,7 @@ export default function CheckoutPage() {
 												value={userPromoCode}
 												onChange={(e) => setUserPromoCode(e.target.value)}
 											/>
-										</div>
+										</div> */}
 										<div className="text-center mt-6">
 											<button
 												type="submit"
@@ -549,7 +514,7 @@ export default function CheckoutPage() {
 
 			<Popup
 				isOpen={isPopupOpen}
-				title="Alert"
+				title="Reservation Alert"
 				content={
 					<div>
 						<h1 className="text-center mb-5">
@@ -568,6 +533,44 @@ export default function CheckoutPage() {
 							>
 								Make New Reservation
 							</button>
+						</div>
+						{/* Show the countdown timer in the popup */}
+						<div className="text-center mt-4 font-bold text-red-500">Time Left: {formatTimer(timeLeftPopup)}</div>
+					</div>
+				}
+			/>
+
+			<Popup
+				isOpen={isErrorPopupOpen}
+				title="Alert"
+				content={
+					<div className="flex flex-col justify-center items-center">
+						<h1 className="mb-5">{errorMessage}</h1>
+
+						<div className="flex justify-center gap-3">
+							<button
+								className="bg-button text-white py-2 rounded-lg hover:bg-buttonHover block px-2 w-[100px]"
+								onClick={handleActivate}
+							>
+								Ok
+							</button>
+							{getGuestReservationState.status === false && getGuestReservationState?.data?.status === 'inactive' && (
+								<button
+									className="border border-button text-button py-2 rounded-lg hover:bg-buttonHover hover:text-white block px-2"
+									onClick={handleResendEmail}
+								>
+									Resend Activation Email
+								</button>
+							)}
+
+							{getGuestReservationState.status === false && getGuestReservationState?.data?.status === 'active' && (
+								<button
+									className="border border-button text-button py-2 rounded-lg hover:bg-buttonHover hover:text-white block px-2"
+									onClick={handleLoginButton}
+								>
+									Login
+								</button>
+							)}
 						</div>
 					</div>
 				}

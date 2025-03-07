@@ -113,7 +113,7 @@ export default function Header() {
 															<SignUp size={25} />
 															<li className="px-2 py-1 rounded text-black">Sign up</li>
 														</NavLink>
-														<NavLink to="/become-a-partner" className="flex items-center gap-2 text-button">
+														<NavLink to="/partner" className="flex items-center gap-2 text-button">
 															<Partner size={25} />
 															<li className="px-2 py-1 rounded text-black">Become a partner</li>
 														</NavLink>
@@ -142,7 +142,7 @@ export default function Header() {
 												</li>
 												<li className="font-bold text-[16px]">
 													<NavLink
-														to="become-a-partner"
+														to="partner"
 														className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
 														onClick={closeMobileMenu}
 													>
@@ -156,7 +156,7 @@ export default function Header() {
 										</div>
 									)}
 									{/* <NavLink
-										to="become-a-partner"
+										to="partner"
 										className={`items-center text-button space-x-2 ${isAuthenticated ? 'hidden' : 'md:flex'}`}
 										onClick={closeMobileMenu}
 									>

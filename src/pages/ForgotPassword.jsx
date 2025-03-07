@@ -16,8 +16,6 @@ export default function ForgotPassword() {
 	const [otpVerified, setOtpVerified] = useState(false); // Tracks OTP verification status
 	const navigate = useNavigate();
 
-	console.log('email', email);
-
 	const handleOpenOtpPopup = () => {
 		setIsOtpPopupOpen(true);
 	};
@@ -58,8 +56,6 @@ export default function ForgotPassword() {
 			setLoading(true);
 			const response = await postForgotPassword(email);
 
-			console.log('Response:', response); // Log the API response
-
 			if (response.status === true) {
 				setPopupMessage('OTP has been sent to your email.');
 				handleOpenOtpPopup();
@@ -79,13 +75,9 @@ export default function ForgotPassword() {
 
 		if (!validateOtp()) return;
 
-		console.log('otp', otp);
-
 		try {
 			setLoading(true);
 			const response = await otpVerify(email, otp);
-
-			console.log('Response otpverify:', response); // Log the API response
 
 			if (response.status === true) {
 				setOtpVerified(true);
@@ -111,7 +103,7 @@ export default function ForgotPassword() {
 
 	return (
 		<>
-			<PageTitle title="Forgot Password" description="Reset your password" />
+			<PageTitle title="Forgot Password | Table Bookings" description="Reset your password" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">

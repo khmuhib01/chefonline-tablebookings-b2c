@@ -111,12 +111,16 @@ const getGuestReservation = async (
 	endTime,
 	date,
 	day,
-	numberOfPeople
+	numberOfPeople,
+	userSpecialRequest
 ) => {
+	console.log('userSpecialRequest..........api', userSpecialRequest);
 	try {
 		const {data} = await api.get(
-			`/user/reservation/reservation-book?reservation_uuid=${reservationUUid}&guest_id=${guestId}&status=${status}&rest_uuid=${restUUId}&start_time=${startTime}&end_time=${endTime}&date=${date}&day=${day}&number_of_people=${numberOfPeople}`
+			`/user/reservation/reservation-book?reservation_uuid=${reservationUUid}&guest_id=${guestId}&status=${status}&rest_uuid=${restUUId}&start_time=${startTime}&end_time=${endTime}&date=${date}&day=${day}&number_of_people=${numberOfPeople}&noted=${userSpecialRequest}`
 		);
+
+		console.log('Data', data);
 		return data;
 	} catch (error) {
 		console.error('Error fetching guest reservation:', error);
@@ -124,9 +128,9 @@ const getGuestReservation = async (
 	}
 };
 
-const getRemoveReservation = async (reservationId) => {
+const getRemoveReservation = async (reservationUUId) => {
 	try {
-		const {data} = await api.get(`/user/reservation/reservation-removed?reservation_uuid=${reservationId}`);
+		const {data} = await api.get(`/user/reservation/reservation-removed?reservation_uuid=${reservationUUId}`);
 		return data;
 	} catch (error) {
 		console.error('Error removing reservation:', error);
@@ -185,7 +189,6 @@ const resetPassword = async (email, password) => {
 };
 
 const guestContactUs = async (data) => {
-	console.log('api data', data);
 	try {
 		const {data: response} = await api.post('/user/contact-us', data);
 		return response;
@@ -309,6 +312,33 @@ const getCheckedOut = async (restaurantId, reservationId, checkedOut) => {
 	}
 };
 
+
+const restaurantMenuImageOrPdf = async (data) => {
+	const token = getToken();
+	const headers = {
+		'Content-Type': 'multipart/form-data',
+		Authorization: `Bearer ${token}`,
+	};
+
+	try {
+		const {data: response} = await api.post('/user/menus-photo-upload', data, {headers});
+		return response;
+	} catch (error) {
+		console.error('Error creating restaurant:', error);
+		throw error;
+	}
+};
+
+const postResendEmail = async (email) => {
+	try {
+		const {data: response} = await api.post(`/user/resend-email?email=${email}`);
+		return response;
+	} catch (error) {
+		console.error('Error Resend Email:', error);
+		throw error;
+	}
+};
+
 export {
 	api,
 	getRestaurantData,
@@ -334,4 +364,6 @@ export {
 	resetPassword,
 	fetchTopRestaurantListApi,
 	guestContactUs,
+	restaurantMenuImageOrPdf,
+	postResendEmail,
 };

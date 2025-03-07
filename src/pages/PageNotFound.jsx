@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
+import PageTitle from '../components/PageTitle';
 
 export default function PageNotFound() {
 	const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function PageNotFound() {
 	}, []);
 	return (
 		<>
-			<PageTitle title="Page Not Found" description="Search Result Page Description" />
+			<PageTitle title="Page Not Found | Table Bookings" description="Search Result Page Description" />
 			<div className="flex items-center justify-center h-[60vh] bg-[#F7F8FA]">
 				<div className="bg-white p-10 rounded shadow-lg text-center border">
 					<h1 className="text-4xl font-bold mb-4">404</h1>

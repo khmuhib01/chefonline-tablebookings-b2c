@@ -25,7 +25,8 @@ export default function ContactPage() {
 	// Ref for reCAPTCHA
 	const recaptchaRef = useRef();
 
-	useEffect(() => {
+	// prevent page reload and disable right-click
+	/* 	useEffect(() => {
 		window.scrollTo(0, 0);
 		// Disable right-click
 		document.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -62,7 +63,7 @@ export default function ContactPage() {
 			document.removeEventListener('keydown', disableShortcuts);
 			clearInterval(intervalId);
 		};
-	}, []);
+	}, []); */
 
 	const handleChange = (e) => {
 		const {name, value} = e.target;
@@ -100,18 +101,6 @@ export default function ContactPage() {
 			newErrors.phoneNumber = 'Phone Number must be exactly 11 digits.';
 		}
 
-		if (!formData.restaurantName) {
-			newErrors.restaurantName = 'Restaurant Name is required.';
-		}
-
-		// if (!formData.message) {
-		// 	newErrors.message = 'Message is required.';
-		// } else if (formData.message.length < 10) {
-		// 	newErrors.message = 'Message must be at least 10 characters.';
-		// } else if (formData.message.length > maxMessageLength) {
-		// 	newErrors.message = `Message must be no more than ${maxMessageLength} characters.`;
-		// }
-
 		if (!recaptchaToken) {
 			newErrors.recaptcha = 'Please complete the CAPTCHA verification.';
 		}
@@ -137,7 +126,10 @@ export default function ContactPage() {
 				post_code: formData.postcode,
 				phone: formData.phoneNumber,
 				message: formData.message,
+				params: 'contact_us',
 			};
+
+			console.log('data', data);
 
 			const response = await guestContactUs(data);
 
@@ -165,7 +157,7 @@ export default function ContactPage() {
 
 	return (
 		<>
-			<PageTitle title="Contact Us" description="Get in touch with us" />
+			<PageTitle title="Contact Us | Table Bookings" description="Get in touch with us" />
 
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container mx-auto px-4">
@@ -231,7 +223,7 @@ export default function ContactPage() {
 
 										<div className="mb-4">
 											<label htmlFor="restaurantName" className="block text-gray-700 font-bold mb-2">
-												Restaurant Name <span className="text-red-500">*</span>
+												Restaurant Name
 											</label>
 											<input
 												type="text"

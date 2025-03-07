@@ -6,13 +6,14 @@ import {homeBannerImage} from '../ui-share/Image';
 import {clearCurrentReservation} from '../store/reducers/reservationSlice';
 import {getAllRestaurants, getRemoveReservation, fetchTopRestaurantListApi} from '../api';
 import {setCategories, setCategoriesLoading, setCategoriesError} from '../store/reducers/CategorySlice';
-import {setSearchResult, setError} from '../store/reducers/SearchResultSlice';
+import {setSearchResult, setError, clearSearchResult} from '../store/reducers/SearchResultSlice';
 import {appConfig} from '../AppConfig';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import {Comments} from '../ui-share/Icon';
+import {Link} from 'react-router-dom';
 
 const HomePage = () => {
 	const searchResult = useSelector((state) => state.searchResult.searchResult);
@@ -22,11 +23,13 @@ const HomePage = () => {
 
 	const dispatch = useDispatch();
 	const storeReservationId = useSelector((state) => state.reservations.currentReservation.reservation_id);
+	const storeReservationUUID = useSelector((state) => state.reservations.currentReservation.reservation_uuid);
 	const categoryState = useSelector((state) => state.category);
 	const {categories, loading: categoryLoading, error: categoryError} = categoryState;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [restaurantData, setRestaurantData] = useState([]);
 	const [topRestaurantData, settopRestaurantData] = useState([]);
+	const [isReservationRemoved, setIsReservationRemoved] = useState(false);
 	const imageBaseUrl = appConfig.baseUrl;
 
 	useEffect(() => {
@@ -52,64 +55,83 @@ const HomePage = () => {
 		window.scrollTo(0, 0);
 	}, []);
 
+	// ✅ Prevent duplicate API calls by tracking state
+	// const removeReservation = async () => {
+	// 	try {
+	// 		if (!storeReservationUUID) {
+	// 			return;
+	// 		}
+
+	// 		const responseRemovedReservation = await getRemoveReservation(storeReservationUUID);
+
+	// 		if (responseRemovedReservation?.status === true) {
+	// 			setIsReservationRemoved(true); // ✅ Set state to prevent duplicate calls
+	// 		} else {
+	// 			console.warn('Reservation removal response was unexpected:', responseRemovedReservation);
+	// 		}
+	// 	} catch (error) {
+	// 		if (error.response && error.response.status === 404) {
+	// 			console.warn('Reservation not found, skipping removal.');
+	// 			setIsReservationRemoved(true); // ✅ Mark as removed even if 404 to prevent re-tries
+	// 		} else {
+	// 			console.error('Error removing reservation:', error);
+	// 		}
+	// 	}
+	// };
+
 	const removeReservation = async () => {
 		try {
-			const responseRemovedReservation = await getRemoveReservation(storeReservationId);
-			return responseRemovedReservation;
+			if (!storeReservationUUID) {
+				const responseRemovedReservation = await getRemoveReservation(storeReservationUUID);
+				if (responseRemovedReservation?.status === true) {
+					setIsReservationRemoved(true); // ✅ Set state to prevent duplicate calls
+				} else {
+					console.warn('Reservation removal response was unexpected:', responseRemovedReservation);
+				}
+			}
 		} catch (error) {
 			console.error('Error removing reservation:', error);
 		}
 	};
 
-	const settings = {
-		dots: true,
-		infinite: false,
-		speed: 500,
-		slidesToShow: 4,
-		slidesToScroll: 4,
-		initialSlide: 0,
-		responsive: [
-			{
-				breakpoint: 1024,
-				settings: {
-					slidesToShow: 3,
-					slidesToScroll: 3,
-					infinite: true,
-					dots: true,
-				},
-			},
-			{
-				breakpoint: 600,
-				settings: {
-					slidesToShow: 2,
-					slidesToScroll: 2,
-					initialSlide: 2,
-				},
-			},
-			{
-				breakpoint: 480,
-				settings: {
-					slidesToShow: 1,
-					slidesToScroll: 1,
-				},
-			},
-		],
-	};
-
-	// const fetchTopRestaurantList = async () => {
-	// 	try {
-	// 		const response = await getTopReviewAllRestaurants();
-	// 		console.log('API Response:', response.data.data);
-	// 		setRestaurantData(response.data.data);
-	// 	} catch (error) {
-	// 		console.error('Error fetching restaurants:', error);
-	// 	}
+	// const settings = {
+	// 	dots: true,
+	// 	infinite: false,
+	// 	speed: 500,
+	// 	slidesToShow: 4,
+	// 	slidesToScroll: 4,
+	// 	initialSlide: 0,
+	// 	responsive: [
+	// 		{
+	// 			breakpoint: 1024,
+	// 			settings: {
+	// 				slidesToShow: 3,
+	// 				slidesToScroll: 3,
+	// 				infinite: true,
+	// 				dots: true,
+	// 			},
+	// 		},
+	// 		{
+	// 			breakpoint: 600,
+	// 			settings: {
+	// 				slidesToShow: 2,
+	// 				slidesToScroll: 2,
+	// 				initialSlide: 2,
+	// 			},
+	// 		},
+	// 		{
+	// 			breakpoint: 480,
+	// 			settings: {
+	// 				slidesToShow: 1,
+	// 				slidesToScroll: 1,
+	// 			},
+	// 		},
+	// 	],
 	// };
 
 	const fetchRestaurantList = async () => {
 		try {
 			const response = await getAllRestaurants();
-			console.log('Full API Response:', response); // Debug the full response
 
 			if (response?.data?.data) {
 				setRestaurantData(response.data.data); // Ensure the response structure is correct
@@ -124,7 +146,6 @@ const HomePage = () => {
 	const fetchTopRestaurantList = async () => {
 		try {
 			const response = await fetchTopRestaurantListApi();
-			console.log('Full API Response:', response); // Debug the full response
 
 			if (response?.data?.data) {
 				settopRestaurantData(response.data.data); // Ensure the response structure is correct
@@ -140,7 +161,6 @@ const HomePage = () => {
 		console.log('categoryId', categoryId);
 		try {
 			const response = await getAllRestaurants();
-			console.log('API Response:', response.data.data);
 			const filteredData = response.data.data.filter((item) => {
 				return String(item.category) === String(categoryId);
 			});
@@ -154,42 +174,21 @@ const HomePage = () => {
 		}
 	};
 
-	const nearByRestaurantData = [
-		{
-			name: 'Ristorante Piperno',
-			location: 'Centro Storico area',
-			cuisine: 'Roman',
-			priceRange: '€€€€',
-			rating: '5.2/6',
-			reviews: 613,
-			tags: ['Romantic', 'Family-friendly', 'Good for groups'],
-			image: 'https://qul.imgix.net/10743789-351f-4217-8e78-68556cc1a767/509827_sld.jpg?auto=format&w=781',
-		},
-		{
-			name: 'Ristorante Pizzeria Gaudi',
-			location: 'Salario area',
-			cuisine: 'Pizza',
-			priceRange: '€€€',
-			rating: '5.0/6',
-			reviews: 293,
-			tags: ['Family-friendly', 'Good for groups'],
-			image: 'https://qul.imgix.net/664bf1d0-97b1-49e4-85a0-70adfafab396/533393_sld.jpg?auto=format&w=781',
-		},
-		{
-			name: 'Babette',
-			location: 'Centro Storico area',
-			cuisine: 'Roman',
-			priceRange: '€€€€',
-			rating: '5.7/6',
-			reviews: 124,
-			tags: ['Romantic', 'Family-friendly', 'Good for groups'],
-			image: 'https://qul.imgix.net/a0e7bf3f-106c-42d0-b903-c382790ca5c4/609323_sld.jpg?auto=format&w=781',
-		},
-	];
+	useEffect(() => {
+		if (storeReservationUUID && !isReservationRemoved) {
+			removeReservation();
+		}
+	}, [storeReservationUUID]); // ✅ Only runs when UUID changes
+
+	useEffect(() => {
+		if (searchResult.data.length > 0) {
+			dispatch(clearSearchResult());
+		}
+	}, []);
 
 	return (
 		<>
-			<PageTitle title="Book a table | Table Booking" description="Home Page Description" />
+			<PageTitle title="Book a table | Table Bookings" description="Home Page Description" />
 
 			<div
 				className="h-[80vh] bg-no-repeat bg-cover bg-center px-5"
@@ -214,43 +213,6 @@ const HomePage = () => {
 
 			<div className="container px-5">
 				<div className="flex flex-col gap-20 py-20">
-					{/*<div className="flex flex-col gap-10">
-						<div className="">
-							<h2 className="text-4xl text-center font-bold leading-none">Discover London’s Top Dining Spots</h2>
-						</div>
-						<div className="flex flex-col gap-2 items-center">
-							<h2 className="text-2xl font-bold leading-none">Book a table at top local restaurants.</h2>
-							<p className="text-bodyText text-xl leading-none">Dine at London’s favourites – your table awaits</p>
-						</div>
-						 <div className="slider-container">
-							<Slider {...settings}>
-								{restaurantData.map((restaurant, index) => (
-									<div key={index} className="pr-4">
-										{' '}
-										<div className="rounded-lg overflow-hidden">
-											<img src={restaurant.image} alt={restaurant.name} className="h-[200px] w-full object-cover" />
-											<h3 className="text-lg font-bold">{restaurant.name}</h3>
-											<div className="flex justify-between items-center">
-												<div className="">
-													<p className="text-sm bodyText">{restaurant.location}</p>
-													<p className="text-sm bodyText font-bold">{restaurant.cuisine}</p>
-												</div>
-
-												<div className="flex flex-col items-end mt-2">
-													<span className="text-green-500 font-bold">{restaurant.rating}</span>
-													<div className="flex items-center gap-2">
-														<Comments color="#9ca3af " />
-														<span className="text-gray-400 text-sm">{restaurant.reviews}</span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								))}
-							</Slider>
-						</div> 
-					</div>*/}
-
 					<div className="w-[100%] md:w-[60%] m-auto">
 						<div className="bg-red-200 rounded-lg p-8 flex flex-col md:flex-row items-center justify-between gap-8">
 							<div>
@@ -293,8 +255,8 @@ const HomePage = () => {
 
 						<div className="flex  justify-center space-x-4 mb-6 overflow-x-auto px-4 w-full">
 							{categories &&
-								[...categories] // Creates a shallow copy of the array to avoid modifying the original
-									.sort((a, b) => a.name.localeCompare(b.name)) // Sorts categories alphabetically by name
+								[...categories]
+									.sort((a, b) => a.name.localeCompare(b.name))
 									.map((category) => (
 										<button
 											key={category.id}
@@ -309,28 +271,37 @@ const HomePage = () => {
 						</div>
 						<div className="flex justify-center px-4 w-full mb-6">
 							{restaurantData.length > 0 ? (
-								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+								<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
 									{restaurantData.map((restaurant, index) => (
-										<div key={index} className="flex flex-col text-center items-center gap-4 p-4">
-											<img
-												src={
-													restaurant?.avatar ? `${imageBaseUrl}${restaurant.avatar}` : 'https://via.placeholder.com/150'
-												}
-												alt={restaurant?.name || 'Restaurant Image'}
-												className="w-28 h-28 object-cover rounded-full"
-											/>
-											<div className="flex-1">
-												<h3 className="text-lg font-bold mb-1">{restaurant?.name || 'Unknown Restaurant'}</h3>
-												<p className="text-gray-500 text-sm mb-2">{restaurant?.category_list?.name || 'N/A'}</p>
-												<div className="flex flex-wrap gap-2 mt-2">
-													{restaurant?.label_tags?.map((tag, tagIndex) => (
-														<span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 text-[12px] rounded">
-															{tag?.name || 'N/A'}
-														</span>
-													))}
+										<Link to={`/restaurant-details/${restaurant.uuid}`} key={index}>
+											<div
+												key={index}
+												className="flex flex-col text-center items-center gap-4 p-4 bg-white shadow-md rounded-md hover:shadow-lg transition duration-300 ease-in-out"
+											>
+												<img
+													src={
+														restaurant?.avatar
+															? `${imageBaseUrl}${restaurant.avatar}`
+															: 'https://via.placeholder.com/150'
+													}
+													alt={restaurant?.name || 'Restaurant Image'}
+													className="w-28 h-28 object-cover rounded-full"
+												/>
+												<div className="flex-1">
+													<h3 className="text-lg font-bold mb-1 h-[65px]">
+														{restaurant?.name || 'Unknown Restaurant'}
+													</h3>
+													<p className="text-gray-500 text-sm mb-2">{restaurant?.category_list?.name || 'N/A'}</p>
+													<div className="flex flex-wrap gap-2 mt-2">
+														{restaurant?.label_tags?.map((tag, tagIndex) => (
+															<span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-600 text-[12px] rounded">
+																{tag?.name || 'N/A'}
+															</span>
+														))}
+													</div>
 												</div>
 											</div>
-										</div>
+										</Link>
 									))}
 								</div>
 							) : (
@@ -341,15 +312,15 @@ const HomePage = () => {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+					{/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
 						<div>
 							<h2 className="text-4xl font-bold leading-none">
 								Explore local gems! Your next favorite restaurant is just around the corner!
 							</h2>
 							<p className="text-lg text-gray-600 mb-6">Discover and book your perfect table nearby!</p>
-							{/* <button className="px-4 py-2 bg-button text-white rounded-md hover:bg-buttonHover focus:outline-none gap-2 flex items-center justify-center">
+							<button className="px-4 py-2 bg-button text-white rounded-md hover:bg-buttonHover focus:outline-none gap-2 flex items-center justify-center">
 								Discover restaurants
-							</button> */}
+							</button>
 						</div>
 						<div className="space-y-8">
 							{topRestaurantData.map((restaurant, index) => (
@@ -416,7 +387,7 @@ const HomePage = () => {
 								</>
 							)}
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</>

@@ -3,7 +3,6 @@ import {Tag, Map, WebLink, Phone, Time} from './../../../ui-share/Icon';
 import {Link} from 'react-router-dom';
 
 export default function AboutTabComponent({details}) {
-
 	const getDayName = () => {
 		const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 		const today = new Date();
@@ -33,8 +32,8 @@ export default function AboutTabComponent({details}) {
 						<Tag size={25} className="text-bodyText" />
 					</div>
 					<div className="flex flex-wrap items-center gap-2">
-						{details?.data?.label_tags?.length > 0 ? (
-							details.data.label_tags.map((tag, index) => (
+						{details?.data?.about_label_tags?.length > 0 ? (
+							details.data.about_label_tags.map((tag, index) => (
 								<span key={index} className="text-xs px-3 py-1 bg-gray-200 text-gray-700 rounded-full uppercase">
 									{tag?.name || 'N/A'}
 								</span>
@@ -90,7 +89,7 @@ export default function AboutTabComponent({details}) {
 							<div className="flex justify-between mb-2">
 								<div className="flex items-center gap-2">
 									<Time size={20} className="text-button" />
-									<span className="text-button font-bold">Open today</span>
+									<span className="text-button font-bold">Opening hour</span>
 								</div>
 								{todaySlots.length > 0 ? (
 									<span className="text-bodyText font-bold">{`Opens at ${convertTo12HourFormat(

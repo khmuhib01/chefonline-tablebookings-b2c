@@ -1,10 +1,11 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Calendar, People, Time} from '../ui-share/Icon';
 import {useNavigate} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {clearCurrentReservation, setReservationId} from '../store/reducers/reservationSlice';
 import {formatTime} from '../utils/conversions';
 import PageTitle from '../components/PageTitle';
+import {AuthContextGuest} from '../context/AuthContextGuest';
 
 export default function ThankYouPage() {
 	const navigate = useNavigate();
@@ -22,6 +23,8 @@ export default function ThankYouPage() {
 
 	const storeGuestID = useSelector((state) => state.reservations.currentReservation.user_id);
 	const storeReservationID = useSelector((state) => state.reservations);
+
+	const {isAuthenticated} = useContext(AuthContextGuest);
 
 	const handleEditReservationSubmit = () => {
 		// Ensure the navigation happens after any necessary cleanup or async operations
@@ -41,7 +44,7 @@ export default function ThankYouPage() {
 
 	return (
 		<>
-			<PageTitle title="Thank You" description="Home Page Description" />
+			<PageTitle title="Thank You | Table Bookings" description="Home Page Description" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">
@@ -52,15 +55,16 @@ export default function ThankYouPage() {
 								<h2 className="text-xl font-bold text-titleText leading-none capitalize">
 									Thanks for your reservation
 								</h2>
-								<p className="text-bodyText">Please check your email for your reservation details.</p>
+
+								{isAuthenticated ? (
+									<p className="text-bodyText">Please check your email for your reservation details.</p>
+								) : (
+									<p className="text-bodyText">
+										Please check your email for your reservation details. You must activate your account to make future
+										reservations.
+									</p>
+								)}
 								<div className="flex items-center gap-3">
-									{/* <button
-									type="button"
-									className="w-full border-2 border-button text-button py-2 rounded-lg hover:bg-buttonHover hover:text-white focus:outline-none focus:ring-2"
-									onClick={handleEditReservationSubmit}
-								>
-									Edit your reservation
-								</button> */}
 									<button
 										type="button"
 										className="w-full bg-button text-white py-2 rounded-lg hover:bg-buttonHover"

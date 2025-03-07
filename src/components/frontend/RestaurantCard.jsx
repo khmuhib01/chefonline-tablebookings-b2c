@@ -49,7 +49,8 @@ const RestaurantCard = ({restaurant}) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex-shrink-0 flex flex-col items-center justify-center px-10 py-3 border-t md:border-t-0 border-gray-200">
+			{/* Don't delete. This is for rating */}
+			{/* <div className="flex-shrink-0 flex flex-col items-center justify-center px-10 py-3 border-t md:border-t-0 border-gray-200">
 				{restaurant.reviews && restaurant.reviews.length > 0 ? (
 					<>
 						<div className="text-white bg-button font-semibold rounded-full px-3 py-1">
@@ -65,7 +66,7 @@ const RestaurantCard = ({restaurant}) => {
 						<div className="text-gray-500 text-sm">No reviews</div>
 					</>
 				)}
-			</div>
+			</div> */}
 		</Link>
 	);
 };

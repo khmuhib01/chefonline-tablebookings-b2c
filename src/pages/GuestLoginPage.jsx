@@ -107,7 +107,7 @@ export default function GuestLoginPage() {
 
 	return (
 		<>
-			<PageTitle title="Sign in" description="Home Page Description" />
+			<PageTitle title="Sign in | Table Bookings" description="Home Page Description" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">

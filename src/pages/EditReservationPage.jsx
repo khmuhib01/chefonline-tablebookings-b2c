@@ -16,7 +16,7 @@ export default function EditReservationPage() {
 	}, []);
 	return (
 		<>
-			<PageTitle title="Edit reservation" description="Home Page Description" />
+			<PageTitle title="Edit reservation | Table Bookings" description="Home Page Description" />
 			<div className="bg-[#F7F8FA] py-10">
 				<div className="container px-2">
 					<div className="flex flex-col gap-16 w-full">
